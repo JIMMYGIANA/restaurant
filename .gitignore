@@ -1,1 +1,24 @@
-node_modules
+# Node.js
+node_modules/
+
+# Angular
+/dist/
+/e2e/*.json
+
+# Editor specific files
+.vscode/
+*.iml
+.idea/
+
+# Code coverage reports
+coverage/
+
+# Environment configuration
+.env
+.env.local
+
+# Log files
+*.log
+
+# Temporary files
+*.swp
