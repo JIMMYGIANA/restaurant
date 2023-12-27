@@ -1,22 +1,49 @@
-<mat-card>
-    <mat-card-header>
-      <mat-card-title>Actions Buttons</mat-card-title>
-      <mat-card-subtitle>Start</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-actions>
-      <button mat-button>LIKE</button>
-      <button mat-button>SHARE</button>
-    </mat-card-actions>
-  </mat-card>
-  <br>
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>Actions Buttons</mat-card-title>
-      <mat-card-subtitle>End</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-actions align="end">
-      <button mat-button>LIKE</button>
-      <button mat-button>SHARE</button>
-    </mat-card-actions>
-  </mat-card>
+<mat-card style="width:max-content;">
+
   
+
+  <mat-card-header>
+    
+      
+    <mat-card-title style="align-content: center;">
+      
+      <div *ngIf="tableData.clients == 0; else loginSection">
+      <mat-card-subtitle style="color: green;">
+        <label style="color: black; font-size: large;">{{ tableData.number }}</label>
+        &nbsp;&nbsp; &nbsp;&nbsp; 
+        <mat-icon style="color: green;" >fiber_manual_record</mat-icon>&nbsp;&nbsp;
+        FREE
+      </mat-card-subtitle>
+      </div>
+      <ng-template #loginSection>
+        <div>
+          <mat-card-subtitle style="color: red;">
+            <label style="color: black; font-size: large;">{{ tableData.number }}</label>
+            &nbsp;&nbsp; &nbsp;&nbsp; 
+            <mat-icon style="color: red;">fiber_manual_record</mat-icon> &nbsp;&nbsp; 
+            OCUPIED
+          </mat-card-subtitle>
+        </div>
+      </ng-template>
+
+
+    </mat-card-title>
+    
+  </mat-card-header>
+  <mat-card-actions>
+    
+    <div>
+    </div>
+
+  </mat-card-actions>
+  <mat-card-content>
+    <button (click)="updateClient(false)" mat-button>-</button>
+    <!-- <mat-icon *ngFor="let number of generateNumbers(1, tableData.clients)">person</mat-icon>
+    <mat-icon *ngFor="let number of generateNumbers(1, tableData.seats - tableData.clients)">person_outline</mat-icon> -->
+    <input [(ngModel)]="clientsNumber">
+    <button (click)="updateClient(true)" mat-button>+</button>
+    
+  </mat-card-content>
+  <button mat-button (click)="setClients()">SET CLIENTS</button>
+  <button mat-button (click)="openOrderMenuDialog()">ORDER</button>
+</mat-card>

@@ -1,0 +1,16 @@
+<!-- order-menu-dialog.component.html -->
+<div>
+    <h2 style="margin-top: 15px; margin-left: 15px;">Menu</h2>
+    <!-- Your dialog content goes here -->
+    <div fxLayout="row" fxLayoutAlign="start" style="margin-bottom: 30px;">
+        <div fxFlex="column">
+            <div *ngFor="let dish of (dishes | async); let i = index" style="width: 300px; margin: 30px; ">
+                <app-order [dishData]="dish" (plateNumberChange)="onPlateNumberChange($event)"></app-order>
+            </div>
+        </div>
+    </div>
+    <div style="margin-left: 50px;">
+        <button mat-button (click)="createOrder()">Create order</button>
+        <button mat-button (click)="closeDialog()">Close</button>
+    </div>
+</div>
