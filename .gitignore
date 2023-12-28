@@ -4,6 +4,7 @@ node_modules/
 # Angular
 /dist/
 /e2e/*.json
+.angular/cache
 
 # Editor specific files
 .vscode/
