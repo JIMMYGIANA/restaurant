@@ -1,0 +1,12 @@
+<h1 >Orders</h1>
+
+<div fxLayout="row" fxLayoutAlign="start" style="margin-bottom: 30px;">
+    <div fxFlex="column">
+        <div *ngFor="let order of (orders | async); let i = index" style="width: 300px; margin: 30px; ">
+            <b>Table: {{ order.table }}</b>
+            <p>Number: {{ order.number }}</p>
+            <p style="color: green;">READY</p>
+            <button (click)="serve(order.number, order.table)">Serve</button>
+        </div>
+    </div>
+</div>

@@ -1,117 +1,106 @@
 import { CdkTableDataSourceInput } from '@angular/cdk/table';
-import { Component } from '@angular/core';
-import { Observable, forkJoin, map, of, switchMap, take } from 'rxjs';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { BehaviorSubject, Observable, Subject, combineLatest, forkJoin, from, map, of, switchMap, take } from 'rxjs';
 import { IDish } from 'src/app/model/dishModel';
 import { IOrder } from 'src/app/model/orderModel';
 import { CooksService } from 'src/app/services/cooks.service';
 import { RestaurantService } from 'src/app/services/restaurant.service';
+import { distinctUntilChanged, filter, groupBy, mergeMap, shareReplay, takeUntil, tap, toArray } from 'rxjs/operators';
+import { IDrink } from 'src/app/model/drinkModel';
+import { WebSocketService } from 'src/app/services/webSocket.service';
+import { Router } from '@angular/router';
+import { UserService } from 'src/app/services/user.service';
 
 
-export interface PeriodicElement {
-  name: string;
-  orderNumber: number;
-  weight: number;
-  symbol: string;
-}
 
-// const ELEMENT_DATA: PeriodicElement[] = [
-//   {orderNumber: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
-//   {orderNumber: 2, name: 'Helium', weight: 4.0026, symbol: 'He'},
-//   {orderNumber: 3, name: 'Lithium', weight: 6.941, symbol: 'Li'},
-//   {orderNumber: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be'},
-//   {orderNumber: 5, name: 'Boron', weight: 10.811, symbol: 'B'},
-//   {orderNumber: 6, name: 'Carbon', weight: 12.0107, symbol: 'C'},
-//   {orderNumber: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N'},
-//   {orderNumber: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O'},
-//   {orderNumber: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F'},
-//   {orderNumber: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne'},
-// ];
 
 @Component({
   selector: 'app-kitchen',
   templateUrl: './kitchen.component.html',
-  styleUrls: ['./kitchen.component.css']
+  styleUrls: ['./kitchen.component.css'],
+  changeDetection: ChangeDetectionStrategy.Default,
 })
-export class KitchenComponent {
+export class KitchenComponent implements OnInit, OnDestroy {
 
-  protected readonly orders: Observable<IOrder[]> = this.cooksService.readOrders();
+  private readonly onDestroy$ = new Subject<void>();
 
-  displayedColumns: string[] = ['order', 'dishName'];
+  protected orders$: Observable<IOrder[]> = this.cooksService.readOrders().pipe(
+    map(orders => orders.filter(order => order.orderPreparedCook == null)),
+    shareReplay(1)
+  );
 
-  // dataSource = this.orders.pipe(
-  //   map(orders => {
-  //     const result: any[] = [];
-  //     if (orders) {
-  //       orders.forEach(o => {
-  //         if (o.dishes) {
-  //           o.dishes.forEach(dish => {
-  //             result.push({
-  //               order: o.number,
-  //               dishName: this.cooksService.getDish(dish).pipe(take(1)).subscribe()
-  //             })
-  //           })
-  //         }
-  //       })
-  //     }
+  protected readonly orders$$ = new BehaviorSubject<IOrder[]>([]);
 
-  //     return result;
-  //   }
-  //   )
-  // );
+  protected readonly tableNumber: Observable<number> = this.cooksService.tableNumber().pipe(distinctUntilChanged(), shareReplay(1));
 
-  dataSource$: Observable<{ order: number; dishName: string }[]> = this.orders.pipe(
-    switchMap((orders: IOrder[] | null) => {
-      if (!orders) {
-        return of([]); // Provide a default value (empty array) if orders is null
-      }
+  protected readonly ordersGrouped$: Observable<{ key: string, items: IOrder[] }[]> = combineLatest([this.orders$$, this.tableNumber])
+  .pipe(
+    takeUntil(this.onDestroy$),
+    map(([orders, tableNumber]) => {
+      const groupedOrders: Record<string, IOrder[]> = orders.reduce((acc: Record<string, IOrder[]>, order) => {
+        const key = order.table.toString();
+        acc[key] = (acc[key] || []).concat(order);
+        return acc;
+      }, {});
 
-      const dishObservables: Observable<IDish>[] = orders.reduce((acc: Observable<IDish>[], o: IOrder) => {
-        if (o.dishes) {
-          const dishObservablesForOrder = o.dishes.map(dish => {
-            return this.cooksService.getDish(dish);
-          });
-          return [...acc, ...dishObservablesForOrder];
-        } else {
-          return acc;
-        }
-      }, []);
-
-      return forkJoin(dishObservables).pipe(
-        map((dishes: IDish[]) => {
-          const result: any[] = [];
-
-          orders.forEach((o, orderIndex) => {
-            if (o.dishes) {
-              o.dishes.forEach((dish, dishIndex) => {
-                result.push({
-                  order: o.number,
-                  dishName: dishes[orderIndex * o.dishes.length + dishIndex].name,
-                });
-              });
-            }
-          });
-
-          return result;
-        })
-      );
+      return Object.entries(groupedOrders).map(([key, items]) => ({ key, items }));
     })
   );
 
+  protected takeOrder(orderNumber: number, orderTable: number){
+    this.cooksService.takeOrder({
+      number: orderNumber,
+      table: orderTable
+    }).pipe(take(1)).subscribe();
+  }
+
+  protected completeOrder(orderNumber: number, orderTable: number){
+    this.cooksService.completeOrder({
+      number: orderNumber,
+      table: orderTable
+    }).pipe(take(1)).subscribe();
+    this.cooksService.orderDishesPreparation({
+      orderNumber: orderNumber,
+      tableNumber: orderTable
+    }).pipe(take(1)).subscribe();
+  }
+
+  protected logout(){
+    this.userService.logout();
+    this.router.navigate(['']);
+  }
+
   constructor(
+    protected readonly router: Router,
+    private userService: UserService,
     private restaurantService: RestaurantService,
-    private cooksService: CooksService
+    private cooksService: CooksService,
+    private webSocketService: WebSocketService,
+    private cdr: ChangeDetectorRef
   ) {
-    // this.dataSource = this.orders.pipe(
-    //   map(orders => orders
-    //     .map(order => order.dishes
-    //       .map(dish => ({
-    //         orderNumber: order.number,
-    //         dishName: cooksService.getDish(dish).pipe(
-    //           map(dish => dish.name)
-    //         )
-    //       }))
-    //     )
-    //   ) 
-    // );
+    this.cdr.markForCheck();
+  }
+  
+  ngOnInit(): void {
+    this.webSocketService.connect();
+
+    // Subscribe to WebSocket events
+    this.webSocketService.on<IOrder>('newOrder').pipe(
+      switchMap((orderData: any) => this.cooksService.readOrder(orderData.data.orderNumber, orderData.data.tableNumber))
+    ).subscribe(newOrder => {
+      console.log('NEW ORDER ----- '+newOrder);
+      this.orders$$.next([newOrder, ...this.orders$$.value]);
+      this.cdr.markForCheck();
+    });
+
+    this.orders$.pipe(
+      tap(orders => this.orders$$.next(orders))
+    ).subscribe();
+  }
+
+  ngOnDestroy(): void {
+    this.webSocketService.disconnect();
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

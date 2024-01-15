@@ -1,19 +1,20 @@
 
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Observable, take } from 'rxjs';
+import { Observable, take, tap } from 'rxjs';
 import { IDish } from 'src/app/model/dishModel';
 import { IDrink } from 'src/app/model/drinkModel';
 import { IOrder } from 'src/app/model/orderModel';
 import { RestaurantService } from 'src/app/services/restaurant.service';
 import { WaitersService } from 'src/app/services/waiters.service';
+import { WebSocketService } from 'src/app/services/webSocket.service';
 
 @Component({
   selector: 'app-order-menu',
   templateUrl: './order-menu.component.html',
   styleUrls: ['./order-menu.component.css']
 })
-export class OrderMenuComponent{
+export class OrderMenuComponent {
   
   protected readonly dishes: Observable<IDish[]> = this.restaurantService.readDishes();
   protected readonly drinks: Observable<IDrink[]> = this.restaurantService.readDrinks();
@@ -25,14 +26,16 @@ export class OrderMenuComponent{
     private dialogRef: MatDialogRef<OrderMenuComponent>,
     private restaurantService: RestaurantService,
     private waitersService: WaitersService,
-    @Inject(MAT_DIALOG_DATA) public tableNumber: number
+    @Inject(MAT_DIALOG_DATA) public data: { tableNumber: number, tableClients: number},
+    private webSocketService: WebSocketService
     ) {
-      console.log('Numero del tavolo:', tableNumber);
+      console.log('Numero del tavolo:', data.tableNumber);
       this.order = {
-        table: this.tableNumber,
+        table: this.data.tableNumber,
         dishes: [],
         drinks: []
       };
+
     }
 
   closeDialog(): void {
@@ -50,8 +53,20 @@ export class OrderMenuComponent{
 
   createOrder(){
     this.waitersService.createOrder(this.order).pipe(
-      take(1)
-    ).subscribe();
+      //tap(() => this.webSocketService.notifyOrderCreated()),
+      take(1),
+    ).subscribe((response: any) => {
+      this.webSocketService.notifyOrderCreated(response.data, this.data.tableNumber)
+    });
+    const orderStat = {
+      orderNumber: this.order.number,
+      tableNumber: this.data.tableNumber,
+      dishes: this.order.dishes.lenght,
+      drinks: this.order.drinks.lenght,
+      clients: this.data.tableClients
+    };
+    this.waitersService.createOrderStatistics(orderStat).pipe(take(1)).subscribe();
     this.closeDialog();
   }
+
 }

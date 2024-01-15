@@ -6,7 +6,7 @@ import { IDish } from 'src/app/model/dishModel';
   templateUrl: './order.component.html',
   styleUrls: ['./order.component.css']
 })
-export class OrderComponent {
+export class OrderDishComponent {
   @Input() dishData!: IDish;
 
   @Output() plateNumberChange = new EventEmitter<{ plateCount: number, plateNumber: number }>();

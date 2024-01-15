@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
 import { take } from 'rxjs';
 import { UserRole } from 'src/app/model/userModel';
 import { UserService } from 'src/app/services/user.service';
@@ -17,16 +18,14 @@ export class LoginComponent {
   protected readonly password = new FormControl('', [Validators.required]);
   protected hide = true;
 
-  // constructor(
-  //   
-  // ) {}
 
   testForm: FormGroup;
 
   constructor(
     private fb: FormBuilder,
     protected readonly router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private cookieService: CookieService
   ) {
     this.testForm = this.fb.group({
       name: ['', Validators.required],
@@ -82,9 +81,14 @@ export class LoginComponent {
 
   handleLoginSuccess(response: any): void {
     const token = response.token;
-    localStorage.setItem('authToken', token);
     
-    switch (response.user.role) {
+    if(this.cookieService.get('authToken') != null){
+      this.userService.logout();
+    }
+
+    this.cookieService.set('authToken', token);
+    
+    switch (response.userRole) {
       case UserRole.Waiters:
         this.router.navigate(['/restaurant']);
         break;
@@ -94,11 +98,11 @@ export class LoginComponent {
         break;
 
       case UserRole.Bartenders:
-        this.router.navigate(['/']);
+        this.router.navigate(['/bar']);
         break;
 
       case UserRole.Cook:
-        this.router.navigate(['/']);
+        this.router.navigate(['/kitchen']);
         break;
       default:
         this.router.navigate(['/menu']);

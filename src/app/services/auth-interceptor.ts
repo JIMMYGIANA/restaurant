@@ -6,20 +6,24 @@ import {
   HttpEvent,
   HttpInterceptor
 } from '@angular/common/http';
+import { CookieService } from 'ngx-cookie-service';
 import { Observable } from 'rxjs';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
+
+  constructor(private cookieService: CookieService) {}
+
   intercept(
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    const authToken = localStorage.getItem('authToken');
+    const authToken = this.cookieService.get('authToken');
 
     if (authToken) {
-      // Cloning the request and adding the Authorization header
+      // Cloning the request and setting the token as a cookie
       const authRequest = request.clone({
-        setHeaders: { Authorization: `Bearer ${authToken}` },
+        withCredentials: true, // Send cookies with the request
       });
 
       // Passing the new request to the next handler

@@ -4,6 +4,7 @@ export interface IDrink {
     description: string;
     type: number;
     price: number;
+    isAlcoholic: boolean;
   }
   
 export enum DrinkType {

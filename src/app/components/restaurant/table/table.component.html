@@ -7,7 +7,7 @@
       
     <mat-card-title style="align-content: center;">
       
-      <div *ngIf="tableData.clients == 0; else loginSection">
+      <div *ngIf="tableData.clients == 0; else ocupiedSection">
       <mat-card-subtitle style="color: green;">
         <label style="color: black; font-size: large;">{{ tableData.number }}</label>
         &nbsp;&nbsp; &nbsp;&nbsp; 
@@ -15,7 +15,7 @@
         FREE
       </mat-card-subtitle>
       </div>
-      <ng-template #loginSection>
+      <ng-template #ocupiedSection>
         <div>
           <mat-card-subtitle style="color: red;">
             <label style="color: black; font-size: large;">{{ tableData.number }}</label>

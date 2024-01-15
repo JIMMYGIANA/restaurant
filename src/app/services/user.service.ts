@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IUser } from '../model/userModel';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root',
@@ -9,14 +10,14 @@ import { IUser } from '../model/userModel';
 export class UserService {
   private baseUrl = 'http://localhost:3000/api/users/'; // Sostituisci con l'URL del tuo server Express
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cookieService: CookieService) {}
 
   login(credentials: any): Observable<any> {
     return this.http.post(`${this.baseUrl}login`, credentials);
   }
 
   logout(): Observable<any> {
-    sessionStorage.removeItem('authToken');
+    this.cookieService.delete('authToken');
     return this.http.post(`${this.baseUrl}logout`, {});
   }
 

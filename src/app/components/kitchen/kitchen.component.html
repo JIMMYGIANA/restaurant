@@ -1,34 +1,29 @@
-<table mat-table *ngIf="dataSource$ | async as dataSource"  class="mat-elevation-z8">
+<h1>Kitchen</h1>
 
-    <!--- Note that these columns can be defined in any order.
-          The actual rendered columns are set as a property on the row definition" -->
-  
-    <!-- Position Column -->
-    <ng-container matColumnDef="order">
-      <th mat-header-cell *matHeaderCellDef> Order number </th>
-      <td mat-cell *matCellDef="let element"> {{element.orderNumber}} </td>
-    </ng-container>
-  
-    <!-- Name Column -->
-    <ng-container matColumnDef="dishName">
-      <th mat-header-cell *matHeaderCellDef> Name </th>
-      <td mat-cell *matCellDef="let element"> {{element.name}} </td>
-    </ng-container>
-  
-    <!-- Weight Column -->
-    <ng-container matColumnDef="weight">
-      <th mat-header-cell *matHeaderCellDef> Weight </th>
-      <td mat-cell *matCellDef="let element"> {{element.weight}} </td>
-    </ng-container>
-  
-    <!-- Symbol Column -->
-    <ng-container matColumnDef="symbol">
-      <th mat-header-cell *matHeaderCellDef> Symbol </th>
-      <td mat-cell *matCellDef="let element"> {{element.symbol}} </td>
-    </ng-container>
-  
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-  </table>
-  
-  
+<h2 style="margin-left: 10px;">ORDERS</h2>
+
+<div *ngFor="let group of ordersGrouped$ | async" style="margin-bottom: 20px;">
+  <div style="font-weight: bold;">Table {{ group.key }}</div>
+  <div *ngFor="let order of group.items" style="margin-left: 20px;">
+
+    <div *ngIf="order.orderPreparedCook == null">
+      
+        <label>Order Number: {{ order.number }}</label>
+        
+        <div *ngIf="order.orderTakenCook == null; else serveOrder">
+          <button (click)="takeOrder(order.number, order.table)">Take</button>
+        </div>
+        
+        <ng-template #serveOrder>
+          <div *ngFor="let dish of order.dishes">
+            <app-dish [dishNumber]="dish"></app-dish>
+          </div>
+          <button (click)="completeOrder(order.number, order.table)">Serve</button>
+        </ng-template>
+
+        <button (click)="logout()"></button>
+    </div>
+  </div>
+
+</div>
+

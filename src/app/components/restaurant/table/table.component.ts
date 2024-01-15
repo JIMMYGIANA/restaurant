@@ -56,7 +56,10 @@ export class TableComponent implements OnInit {
     this.dialog.open(OrderMenuComponent, {
       width: '90%',  
       height: '90vh',
-      data: this.tableData.number
+      data: { 
+        tableNumber: this.tableData.number, 
+        tableClients: this.tableData.clients 
+      }
     });
   }
 }

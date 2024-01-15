@@ -1,4 +1,5 @@
 <h1 >{{ restaurantName }}</h1>
+<button (click)="orders()">Kitchen</button>
 <div fxLayout="row" fxLayoutAlign="start" style="margin-bottom: 30px;">
     <div fxFlex="column">
         <div *ngFor="let table of (tables | async); let i = index" style="width: 300px; margin: 30px; ">

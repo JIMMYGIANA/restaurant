@@ -22,7 +22,9 @@
     "@angular/platform-browser-dynamic": "^17.0.8",
     "@angular/router": "^17.0.8",
     "@ngrx/store": "^17.0.1",
+    "ngx-cookie-service": "^17.0.1",
     "rxjs": "~7.8.0",
+    "socket.io-client": "^4.7.3",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.2"
   },
