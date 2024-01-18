@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { ITable } from '../model/tableModel';
@@ -16,6 +16,23 @@ export class WaitersService {
   readTables(): Observable<ITable[]> {
     return this.http.get<ITable[]>(`${this.baseUrl}/tables/readTables`);
   }
+
+  readTable(tableNumber: number): Observable<ITable> {
+    const params = new HttpParams()
+        .set('tableNumber', tableNumber.toString());
+    return this.http.get<ITable>(`${this.baseUrl}/tables/readTable`, {params});
+  }
+
+  readOrders(): Observable<IOrder[]> {
+    return this.http.get<IOrder[]>(`${this.baseUrl}/orders/readOrdersWaiter`);
+  }
+
+  readOrder(orderNumber: number, tableNumber: number): Observable<IOrder> {
+    const params = new HttpParams()
+        .set('orderNumber', orderNumber.toString())
+        .set('tableNumber', tableNumber.toString());
+    return this.http.get<IOrder>(`${this.baseUrl}/orders/readOrder`, { params });
+}
 
   addClient(data: any): Observable<any> {
     return this.http.patch(`${this.baseUrl}/tables/updateTableClients`, data);

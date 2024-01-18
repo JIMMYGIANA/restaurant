@@ -53,10 +53,9 @@ export class OrderMenuComponent {
 
   createOrder(){
     this.waitersService.createOrder(this.order).pipe(
-      //tap(() => this.webSocketService.notifyOrderCreated()),
       take(1),
     ).subscribe((response: any) => {
-      this.webSocketService.notifyOrderCreated(response.data, this.data.tableNumber)
+      this.webSocketService.notifyOrderCreated(response.data, this.data.tableNumber);
     });
     const orderStat = {
       orderNumber: this.order.number,

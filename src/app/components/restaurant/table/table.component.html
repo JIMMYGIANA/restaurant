@@ -9,7 +9,7 @@
       
       <div *ngIf="tableData.clients == 0; else ocupiedSection">
       <mat-card-subtitle style="color: green;">
-        <label style="color: black; font-size: large;">{{ tableData.number }}</label>
+        <label style="color: black; font-size: large;">{{ tableNumber }}</label>
         &nbsp;&nbsp; &nbsp;&nbsp; 
         <mat-icon style="color: green;" >fiber_manual_record</mat-icon>&nbsp;&nbsp;
         FREE
@@ -18,16 +18,19 @@
       <ng-template #ocupiedSection>
         <div>
           <mat-card-subtitle style="color: red;">
-            <label style="color: black; font-size: large;">{{ tableData.number }}</label>
+            <label style="color: black; font-size: large;">{{ tableNumber }}</label>
             &nbsp;&nbsp; &nbsp;&nbsp; 
             <mat-icon style="color: red;">fiber_manual_record</mat-icon> &nbsp;&nbsp; 
             OCUPIED
+            <button (click)="openOrders()" style="margin-left: 90px;">Orders</button>
           </mat-card-subtitle>
         </div>
+        
       </ng-template>
 
 
     </mat-card-title>
+    
     
   </mat-card-header>
   <mat-card-actions>

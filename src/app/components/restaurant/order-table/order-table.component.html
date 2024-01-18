@@ -1,0 +1,19 @@
+
+<div>
+    <h2 style="margin-top: 15px; margin-left: 15px;">Orders table {{ tableNumber$ | async }}</h2>
+    <!-- Your dialog content goes here -->
+    <div fxLayout="row" fxLayoutAlign="start" style="margin-bottom: 30px;">
+        <div fxFlex="column">
+            <div *ngFor="let order of (ordersTable$ | async); let i = index" style="width: 300px; margin: 30px; ">
+                <b>Order number{{ order.number }}</b>
+                <p>Creation: {{ order.orderCreation }}</p>
+                <p style="color: orange;">Preparation: {{ order.orderCreation }}</p>
+                <p>Completed: {{ order.orderCreation }}</p>
+
+                <div *ngIf="order.orderPreparedCook == null">
+                    <!-- <button ()>Modify</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

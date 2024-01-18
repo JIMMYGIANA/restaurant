@@ -2,7 +2,7 @@ import { UserService } from 'src/app/services/user.service';
 
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, repeat, repeatWhen } from 'rxjs';
+import { Observable, repeat, repeatWhen, switchMap } from 'rxjs';
 import { ITable } from 'src/app/model/tableModel';
 import { WaitersService } from 'src/app/services/waiters.service';
 import { WebSocketService } from 'src/app/services/webSocket.service';
@@ -55,7 +55,8 @@ export class RestaurantComponent implements OnInit, OnDestroy {
     this.webSocketService.on<IOrder>('newOrder').subscribe(() => {
       // Handle the new order, maybe update your orders list
       console.log('New Order Arrived:');
-      });
+    });
+
   }
 
   ngOnDestroy(): void {

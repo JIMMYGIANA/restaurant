@@ -28,6 +28,7 @@ import { CashComponent } from './components/cash/cash.component';
 import { OrdersComponent } from './components/orders/orders.component';
 import { WebSocketService } from './services/webSocket.service';
 import { DrinkComponent } from './components/bar/drink/drink.component';
+import { OrderTableComponent } from './components/restaurant/order-table/order-table.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,9 @@ import { DrinkComponent } from './components/bar/drink/drink.component';
     BarComponent,
     CashComponent,
     DishComponent,
-    DrinkComponent
+    DrinkComponent,
+    OrderTableComponent
+
   ],
   imports: [
     BrowserModule,

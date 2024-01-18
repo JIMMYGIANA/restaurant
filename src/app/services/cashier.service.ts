@@ -33,13 +33,11 @@ export class CashierService {
   }
 
   readOrdersStatistics(): Observable<IOrderStatistics[]>{
-    return this.http.get<IOrderStatistics[]>(`${this.baseUrl}/orders/getOrdersStatistics`);
+    return this.http.get<IOrderStatistics[]>(`${this.baseUrl}/statistics/getOrdersStatistics`);
   }
   
   createReceipt(tableNumber: number) {
-    const params = new HttpParams()
-            .set('tableNumber', tableNumber.toString());
-    return this.http.post(`${this.baseUrl}/receipt/createReceipt`, {params});
+    return this.http.post(`${this.baseUrl}/receipts/createReceipt`, { tableNumber });
   }
 
   readReceipts(){

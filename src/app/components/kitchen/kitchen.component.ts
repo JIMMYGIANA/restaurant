@@ -34,38 +34,42 @@ export class KitchenComponent implements OnInit, OnDestroy {
   protected readonly tableNumber: Observable<number> = this.cooksService.tableNumber().pipe(distinctUntilChanged(), shareReplay(1));
 
   protected readonly ordersGrouped$: Observable<{ key: string, items: IOrder[] }[]> = combineLatest([this.orders$$, this.tableNumber])
-  .pipe(
-    takeUntil(this.onDestroy$),
-    map(([orders, tableNumber]) => {
-      const groupedOrders: Record<string, IOrder[]> = orders.reduce((acc: Record<string, IOrder[]>, order) => {
-        const key = order.table.toString();
-        acc[key] = (acc[key] || []).concat(order);
-        return acc;
-      }, {});
+    .pipe(
+      takeUntil(this.onDestroy$),
+      map(([orders, tableNumber]) => {
+        const groupedOrders: Record<string, IOrder[]> = orders.reduce((acc: Record<string, IOrder[]>, order) => {
+          const key = order.table.toString();
+          acc[key] = (acc[key] || []).concat(order);
+          return acc;
+        }, {});
 
-      return Object.entries(groupedOrders).map(([key, items]) => ({ key, items }));
-    })
-  );
+        return Object.entries(groupedOrders).map(([key, items]) => ({ key, items }));
+      })
+    );
 
-  protected takeOrder(orderNumber: number, orderTable: number){
+  protected takeOrder(orderNumber: number, orderTable: number) {
     this.cooksService.takeOrder({
       number: orderNumber,
       table: orderTable
-    }).pipe(take(1)).subscribe();
+    }).pipe(take(1)).subscribe(() =>
+      this.webSocketService.notifyOrderPreparing(orderNumber, orderTable)
+    );
   }
 
-  protected completeOrder(orderNumber: number, orderTable: number){
+  protected completeOrder(orderNumber: number, orderTable: number) {
     this.cooksService.completeOrder({
       number: orderNumber,
       table: orderTable
-    }).pipe(take(1)).subscribe();
+    }).pipe(take(1)).subscribe(() =>
+    this.webSocketService.notifyOrderReady
+    (orderNumber, orderTable));
     this.cooksService.orderDishesPreparation({
       orderNumber: orderNumber,
       tableNumber: orderTable
     }).pipe(take(1)).subscribe();
   }
 
-  protected logout(){
+  protected logout() {
     this.userService.logout();
     this.router.navigate(['']);
   }
@@ -80,7 +84,7 @@ export class KitchenComponent implements OnInit, OnDestroy {
   ) {
     this.cdr.markForCheck();
   }
-  
+
   ngOnInit(): void {
     this.webSocketService.connect();
 
@@ -88,9 +92,19 @@ export class KitchenComponent implements OnInit, OnDestroy {
     this.webSocketService.on<IOrder>('newOrder').pipe(
       switchMap((orderData: any) => this.cooksService.readOrder(orderData.data.orderNumber, orderData.data.tableNumber))
     ).subscribe(newOrder => {
-      console.log('NEW ORDER ----- '+newOrder);
+      console.log('NEW ORDER ----- ' + newOrder);
       this.orders$$.next([newOrder, ...this.orders$$.value]);
       this.cdr.markForCheck();
+    });
+
+    this.webSocketService.on<IOrder>('orderPreparing').subscribe(() => {
+      // Handle the new order, maybe update your orders list
+      console.log('New Order Arrived:');
+    });
+
+    this.webSocketService.on<IOrder>('orderReady').subscribe(() => {
+      // Handle the new order, maybe update your orders list
+      console.log('New Order Arrived:');
     });
 
     this.orders$.pipe(

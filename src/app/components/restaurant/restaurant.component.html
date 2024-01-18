@@ -3,7 +3,7 @@
 <div fxLayout="row" fxLayoutAlign="start" style="margin-bottom: 30px;">
     <div fxFlex="column">
         <div *ngFor="let table of (tables | async); let i = index" style="width: 300px; margin: 30px; ">
-            <app-table [tableData]="table"></app-table>
+            <app-table [tableData]="table" [tableNumber]="table.number"></app-table>
         </div>
     </div>
 </div>

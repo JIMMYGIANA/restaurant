@@ -21,7 +21,7 @@ export class CooksService {
     readOrder(orderNumber: number, tableNumber: number): Observable<IOrder> {
         const params = new HttpParams()
             .set('orderNumber', orderNumber.toString())
-            .set('tableNumber', tableNumber.toString());;
+            .set('tableNumber', tableNumber.toString());
         return this.http.get<IOrder>(`${this.baseUrl}/orders/readOrder`, { params });
     }
 
