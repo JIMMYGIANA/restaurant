@@ -15,6 +15,7 @@
         </div>
         
         <ng-template #serveOrder>
+          <p>Production time: {{ order.drinksProductionTime }}</p>
           <div *ngFor="let drink of order.drinks">
             <app-drink [drinkNumber]="drink"></app-drink>
           </div>

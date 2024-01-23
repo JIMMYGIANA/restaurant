@@ -1,0 +1,62 @@
+<div>
+    <h2 style="margin-top: 15px; margin-left: 15px;">{{ userRole$ | async }} {{ userEmail$ | async }}</h2>
+    <!-- Your dialog content goes here -->
+    <div fxLayout="row" fxLayoutAlign="start" style="margin-bottom: 30px;">
+        <div fxFlex="column">
+            
+            <div *ngIf="(userRole$ | async) as role">
+                <div *ngIf="role === UserRole.Waiters">
+                    <div *ngFor="let stats of (userStats$ | async);">
+                
+                        <b>Order: {{ stats.orderNumber }} at table: {{stats.tableNumber}}</b>
+                        <p>Creation: {{ stats.creationWaiter }}</p>
+        
+                        <p>Clients: {{ stats.clients }}</p>
+                        <p>Dishes: {{ stats.dishes }}</p>
+                        <p>Drinks: {{ stats.drinks }}</p>
+        
+                    </div>
+                        
+                    <div *ngIf="waiterStats$">
+                        <div *ngFor="let stats of (waiterStats$ | async);">
+                            
+                            <b>Order: {{ stats.orderNumber }} at table: {{stats.tableNumber}}</b>
+                            <p>Creation: {{ stats.creationWaiter }}</p>
+        
+                            <p>Clients: {{ stats.clients }}</p>
+                            <p>Dishes: {{ stats.dishes }}</p>
+                            <p>Drinks: {{ stats.drinks }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="role === UserRole.Cook">
+                    <div *ngFor="let stats of (userStats$ | async);">
+                
+                        <b>Order: {{ stats.orderNumber }} at table: {{stats.tableNumber}}</b>
+                        <p>Cooked: {{ stats.preparationCook }}</p>
+        
+                        <p>Clients: {{ stats.clients }}</p>
+                        <p>Dishes: {{ stats.dishes }}</p>
+                        
+        
+                    </div>
+                </div>
+
+                <div *ngIf="role === UserRole.Bartenders">
+                    <div *ngFor="let stats of (userStats$ | async);">
+                
+                        <b>Order: {{ stats.orderNumber }} at table: {{stats.tableNumber}}</b>
+                        <p>Cooked: {{ stats.preparationDrink }}</p>
+        
+                        <p>Clients: {{ stats.clients }}</p>
+                        <p>Drinks: {{ stats.drinks }}</p>
+        
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>

@@ -1,74 +1,102 @@
-<h1 >Cash</h1>
+<h1>Cash</h1>
 <div fxLayout="row" fxLayoutAlign="start" style="margin-bottom: 30px;">
-    <div fxFlex="column">
-        <h2 style="margin-left: 10px;">TABLES</h2>
-        <div *ngFor="let table of (tables | async); let i = index" style="width: 300px; margin: 30px; ">
+  <div fxFlex="column">
+    <h2 style="margin-left: 10px;">TABLES</h2>
+    <div *ngFor="let table of (tables | async); let i = index" style="width: 300px; margin: 30px; ">
 
-            <div *ngIf="table.clients == 0; else ocupiedSection">
-                <mat-card-subtitle style="color: green;">
-                  <label style="color: black; font-size: large;">{{ table.number }}</label>
-                  &nbsp;&nbsp; &nbsp;&nbsp; 
-                  <mat-icon style="color: green;" >fiber_manual_record</mat-icon>&nbsp;&nbsp;
-                  FREE
-                </mat-card-subtitle>
-                </div>
-                <ng-template #ocupiedSection>
-                  <div>
-                    <mat-card-subtitle style="color: red;">
-                      <label style="color: black; font-size: large;">{{ table.number }}</label>
-                      &nbsp;&nbsp; &nbsp;&nbsp; 
-                      <mat-icon style="color: red;">fiber_manual_record</mat-icon> &nbsp;&nbsp; 
-                      OCUPIED
-                    </mat-card-subtitle>
+      <div *ngIf="table.clients == 0; else ocupiedSection">
+        <mat-card-subtitle style="color: green;">
+          <label style="color: black; font-size: large;">{{ table.number }}</label>
+          &nbsp;&nbsp; &nbsp;&nbsp;
+          <mat-icon style="color: green;">fiber_manual_record</mat-icon>&nbsp;&nbsp;
+          FREE
+        </mat-card-subtitle>
+      </div>
+      <ng-template #ocupiedSection>
+        <div>
+          <mat-card-subtitle style="color: red;">
+            <label style="color: black; font-size: large;">{{ table.number }}</label>
+            &nbsp;&nbsp; &nbsp;&nbsp;
+            <mat-icon style="color: red;">fiber_manual_record</mat-icon> &nbsp;&nbsp;
+            OCUPIED
+          </mat-card-subtitle>
 
-                    <button mat-button (click)="createReceipt(table.number)">Receipt</button>
-                    
-                      
-                  </div>
-                </ng-template>
+          <button mat-button (click)="createReceipt(table.number)">Receipt</button>
+
 
         </div>
-
-        <h2 style="margin-left: 10px;">RECEIPTS</h2>
-
-        <div *ngFor="let receipt of (receipts | async); let i = index" style="width: 300px; margin: 30px; ">
-
-          <label>{{ receipt.number }} Table {{ receipt.table }} Total {{ receipt.totalPrice }} Creation {{ receipt.dataCreation }}</label>
-              
-        </div>
-
-        <h2 style="margin-left: 10px;">ORDERS</h2>
-<!-- 
-        <div *ngFor="let order of (orders | async);  let i = index" style="width: 300px; margin: 30px; ">
-          
-
-          <b>{{ order.number }} Table {{ order.table }} </b>
-
-          <p>Creation: {{ order.orderCreation }}</p>
-
-          <ng-template *ngIf="order.dishes.length">
-            <p>Dishes in preparation: {{ order.orderTakenCook }}</p>
-            <p>Dishes ready: {{ order.orderPreparedCook }}</p>
-
-            <p>Cook: </p>
-          </ng-template> 
-            
-          <ng-template *ngIf="order.drinks.length > 0">
-            <p>Drinks in preparation: {{ order.orderTakenDrink }}</p>
-            <p>Drinks ready: {{ order.orderPreparedDrink }}</p>
-          </ng-template>
-
-          <p>Order served: {{ order.orderServed }}</p>
-          <p>Order payed: {{ order.orderPayed }}</p
-          <br>
-          
-        </div> -->
-      
-        
-        <button (click)="logout()">LOGOUT</button>
+      </ng-template>
 
     </div>
+
+    <h2 style="margin-left: 10px;">USERS</h2>
+
+    <div *ngFor="let user of (users$ | async); let i = index" style="width: 300px; margin: 30px; ">
+      <b>{{ user.role }} </b>
+      <p>{{ user.name }} {{ user.surname}}</p>
+      <p>Email: {{ user.email }}</p>
+      <button (click)="viewUserStats(user.email, user.role)">View stats</button>
+    </div>
+
+    <h2 style="margin-left: 10px;">RECEIPTS</h2>
+
+    
+
+    <mat-accordion>
+      <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            View list
+          </mat-panel-title>
+          <mat-panel-description>
+            
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <div *ngFor="let receipt of (receipts$ | async); let i = index" style="width: 300px; margin: 30px; ">
+
+          <label><b>{{ receipt.number }} </b> _ Table {{ receipt.table }} Total {{ receipt.totalPrice }} Creation {{ receipt.dataCreation }}</label>
+          
+          <button (click)="viewReceiptDetails(receipt.number)">Details</button>
+        </div>
+
+      </mat-expansion-panel>
+      </mat-accordion>
+
+    
+
+    <h2 style="margin-left: 10px;">ORDERS</h2>
+  
+    <div *ngFor="let order of (orders | async);  let i = index" style="width: 300px; margin: 30px; ">
+          
+
+      <b>{{ order.number }} Table {{ order.table }} </b>
+      <b></b>
+
+      <p>Creation: {{ order.orderCreation }}</p>
+
+      <ng-template *ngIf="order.dishes.length">
+        <p>Dishes in preparation: {{ order.orderTakenCook }}</p>
+        <p>Dishes ready: {{ order.orderPreparedCook }}</p>
+      </ng-template> 
+        
+      <ng-template *ngIf="order.drinks.length > 0">
+        <p>Drinks in preparation: {{ order.orderTakenDrink }}</p>
+        <p>Drinks ready: {{ order.orderPreparedDrink }}</p>
+      </ng-template>
+
+      <p>Order served: {{ order.orderServed }}</p>
+      <p>Order payed: {{ order.orderPayed }}</p>
+      <br>
+
+      
+      
+    </div>
+
+    <button (click)="logout()">LOGOUT</button>
+
+  </div>
 </div>
 
-  
+
 <!-- <button (click)="logout()">Logout</button> -->

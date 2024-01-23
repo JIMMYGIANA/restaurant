@@ -27,6 +27,12 @@ export class WaitersService {
     return this.http.get<IOrder[]>(`${this.baseUrl}/orders/readOrdersWaiter`);
   }
 
+  readOrdersTable(tableNumber: number): Observable<IOrder[]> {
+    const params = new HttpParams()
+      .set('tableNumber', tableNumber.toString());
+    return this.http.get<IOrder[]>(`${this.baseUrl}/orders/readOrdersTable`, {params});
+  }
+
   readOrder(orderNumber: number, tableNumber: number): Observable<IOrder> {
     const params = new HttpParams()
         .set('orderNumber', orderNumber.toString())

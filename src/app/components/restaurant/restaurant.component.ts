@@ -2,7 +2,7 @@ import { UserService } from 'src/app/services/user.service';
 
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, repeat, repeatWhen, switchMap } from 'rxjs';
+import { Observable, repeat, repeatWhen, switchMap, tap } from 'rxjs';
 import { ITable } from 'src/app/model/tableModel';
 import { WaitersService } from 'src/app/services/waiters.service';
 import { WebSocketService } from 'src/app/services/webSocket.service';
@@ -24,6 +24,10 @@ export class RestaurantComponent implements OnInit, OnDestroy {
   );
 
   protected readonly notification = this.webSocketService.on<IReceipt>('newReceipt');
+
+  protected readonly notificationOrderReady = this.webSocketService.on<IOrder>('orderReady').pipe(
+    tap((order: any) => alert('Order '+order.data.orderNumber+'\nTable '+order.data.tableNumber+'\nReady!' ))
+  );
  
   protected logout(){
     this.userService.logout();
@@ -51,11 +55,17 @@ export class RestaurantComponent implements OnInit, OnDestroy {
       // Handle the new order, maybe update your orders list
       console.log('Receipt:');
     });
+    
+    this.notificationOrderReady.subscribe(() => {
+      console.log('Order Ready');
+    });
 
     this.webSocketService.on<IOrder>('newOrder').subscribe(() => {
       // Handle the new order, maybe update your orders list
       console.log('New Order Arrived:');
     });
+
+    
 
   }
 

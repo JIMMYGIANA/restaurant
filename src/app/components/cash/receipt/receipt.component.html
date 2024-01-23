@@ -1,0 +1,29 @@
+
+<div>
+    <h2 style="margin-top: 15px; margin-left: 15px;">Receipt {{ receiptNumber$ | async }}</h2>
+    <!-- Your dialog content goes here -->
+    <div fxLayout="row" fxLayoutAlign="start" style="margin-bottom: 30px;">
+        <div fxFlex="column">
+            
+            <div *ngIf="receipt$ | async as receipt">
+                
+                <b>Table: {{ receipt.table }}</b>
+                <p>Creation: {{ receipt.dataCreation }}</p>
+
+                <div *ngFor="let dish of receipt.dishes">
+                    <app-dish [dishNumber]="dish"></app-dish>
+                </div>
+
+                <div *ngFor="let drink of receipt.drinks">
+                    <app-drink [drinkNumber]="drink"></app-drink>
+                </div>
+                
+                <br>
+                <b>Total: {{ receipt.totalPrice }}</b>
+              </div>
+                
+
+
+        </div>
+    </div>
+</div>

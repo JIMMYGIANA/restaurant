@@ -13,7 +13,9 @@ export interface IOrder {
     orderPayed: Date | null,
     
     dishes: number[],
-    drinks: number[]
+    dishesProductionTime: number | null,
+    drinks: number[],
+    drinksProductionTime: number | null
   }
   
  

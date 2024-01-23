@@ -29,6 +29,9 @@ import { OrdersComponent } from './components/orders/orders.component';
 import { WebSocketService } from './services/webSocket.service';
 import { DrinkComponent } from './components/bar/drink/drink.component';
 import { OrderTableComponent } from './components/restaurant/order-table/order-table.component';
+import {MatExpansionModule} from '@angular/material/expansion';
+import { ReceiptComponent } from './components/cash/receipt/receipt.component';
+import { UserStatsComponent } from './components/cash/user-stats/user-stats.component';
 
 @NgModule({
   declarations: [
@@ -45,8 +48,9 @@ import { OrderTableComponent } from './components/restaurant/order-table/order-t
     CashComponent,
     DishComponent,
     DrinkComponent,
-    OrderTableComponent
-
+    OrderTableComponent,
+    ReceiptComponent,
+    UserStatsComponent
   ],
   imports: [
     BrowserModule,
@@ -61,7 +65,8 @@ import { OrderTableComponent } from './components/restaurant/order-table/order-t
     ReactiveFormsModule,
     FormsModule,
     MatDialogModule,
-    MatTableModule
+    MatTableModule,
+    MatExpansionModule
   ],
   providers: [
     {

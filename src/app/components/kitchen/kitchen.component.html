@@ -15,15 +15,17 @@
         </div>
         
         <ng-template #serveOrder>
+          <p>Production time: {{ order.dishesProductionTime }}</p>
           <div *ngFor="let dish of order.dishes">
             <app-dish [dishNumber]="dish"></app-dish>
           </div>
-          <button (click)="completeOrder(order.number, order.table)">Serve</button>
+          <button (click)="completeOrder(order.number, order.table)">Completed</button>
         </ng-template>
 
-        <button (click)="logout()"></button>
+        
     </div>
   </div>
 
 </div>
 
+<button (click)="logout()">LOGOUT</button>

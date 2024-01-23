@@ -38,8 +38,8 @@ export class TableComponent implements OnInit, OnDestroy {
       this.waitersService.readTable(this.tableNumber).subscribe((table) => {
         console.log(table)
         this.tableData = table;
-        this.cdr.detectChanges();
         this.webSocketService.notifySetClients();
+        this.cdr.detectChanges();
       })
     });
   }
@@ -72,7 +72,7 @@ export class TableComponent implements OnInit, OnDestroy {
       height: '90vh',
       data: { 
         tableNumber: this.tableData.number, 
-        tableClients: this.tableData.clients 
+        tableClients: this.tableData.clients, 
       }
     });
   }

@@ -44,9 +44,43 @@ export class CashierService {
     return this.http.get<IReceipt[]>(`${this.baseUrl}/receipts/receipts`);
   }
 
+  readReceipt(receiptNumber: number){
+    const params = new HttpParams()
+            .set('receiptNumber', receiptNumber.toString());
+    return this.http.get<IReceipt>(`${this.baseUrl}/receipts/receipt`, {params});
+  }
+
   deleteReceipt(receiptNumber: number){
     const params = new HttpParams()
             .set('receiptNumber', receiptNumber.toString());
     return this.http.delete(`${this.baseUrl}/receipts/deleteReceipt`, { params });
   }  
+
+  readUsers() : Observable<IUser[]> {
+    return this.http.get<IUser[]>(`${this.baseUrl}/users/getUsers`);
+  }
+
+  readCreationStats(userEmail: string) {
+    const params = new HttpParams()
+            .set('userEmail', userEmail.toString());
+    return this.http.get<IOrderStatistics[]>(`${this.baseUrl}/statistics/getCreationStats`, {params});
+  }
+
+  readPreparationCookStats(userEmail: string) {
+    const params = new HttpParams()
+            .set('userEmail', userEmail.toString());
+    return this.http.get<IOrderStatistics[]>(`${this.baseUrl}/statistics/getPreparationCookStats`, {params});
+  }
+
+  readPreparationDrinkStats(userEmail: string) {
+    const params = new HttpParams()
+            .set('userEmail', userEmail.toString());
+    return this.http.get<IOrderStatistics[]>(`${this.baseUrl}/statistics/getPreparationDrinkStats`, {params});
+  }
+
+  readServeStats(userEmail: string) {
+    const params = new HttpParams()
+            .set('userEmail', userEmail.toString());
+    return this.http.get<IOrderStatistics[]>(`${this.baseUrl}/statistics/getServeStats`, {params});
+  }
 }
