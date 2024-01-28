@@ -1,0 +1,42 @@
+<h4>New drink</h4>
+
+<form [formGroup]="drinkForm" (ngSubmit)="onSubmit()">
+    <div>
+      <label for="name">Name:</label>
+      <input type="text" id="name" formControlName="name">
+    </div>
+    <br>
+    <div>
+      <label for="description">Description:</label>
+      <input type="text" id="description" formControlName="description">
+    </div>
+    <br>
+    
+    <div>
+      <label for="type">Type:</label>
+      <select id="type" formControlName="type">
+          <option value="1">Drink</option>
+          <option value="2">Cocktail</option>
+          <option value="3">Beer</option>
+          <option value="4">Bitter</option>
+          <option value="5">Super Alcohol</option>
+        </select>
+    </div>
+    <br>
+    <div>
+        <label for="price">Price:</label>
+        <input type="number" id="price" formControlName="price">
+      </div>
+      <br>
+    <div>
+        <label for="type">Is Alcoholic:</label>
+        <select id="type" formControlName="type">
+            <option value="true">YES</option>
+            <option value="false">NO</option>
+          </select>
+      </div>
+      <br>
+    <div>
+      <button type="submit" [disabled]="drinkForm.invalid">Submit</button>
+    </div>
+  </form>

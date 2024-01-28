@@ -44,13 +44,15 @@ export class BarComponent implements OnInit, OnDestroy {
     this.barsService.takeOrder({
       number: orderNumber,
       table: orderTable
-    }).pipe(take(1)).subscribe();
+    }).pipe(take(1)).subscribe(() => {
+      this.barsService.readOrders().pipe(
+        map(orders => orders.filter(order => order.orderPreparedDrink == null)),
+        shareReplay(1),
+        tap(orders => this.orders$$.next(orders))
+      ).subscribe();
+    });
 
-    this.barsService.readOrders().pipe(
-      map(orders => orders.filter(order => order.orderPreparedDrink == null)),
-      shareReplay(1),
-      tap(orders => this.orders$$.next(orders))
-    ).subscribe();
+    
   }
 
   protected completeOrder(orderNumber: number, orderTable: number){

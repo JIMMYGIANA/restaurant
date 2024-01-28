@@ -12,5 +12,5 @@ export enum DrinkType {
   Cocktail = 2,
   Beer = 3,
   Bitter = 4,
-  superAlcohol = 5
+  SuperAlcohol = 5
 }

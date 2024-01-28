@@ -52,20 +52,23 @@ export class OrderMenuComponent {
   }
 
   createOrder(){
-    this.waitersService.createOrder(this.order).pipe(
-      take(1),
-    ).subscribe((response: any) => {
-      this.webSocketService.notifyOrderCreated(response.data, this.data.tableNumber);
-    });
-    const orderStat = {
-      orderNumber: this.order.number,
-      tableNumber: this.data.tableNumber,
-      dishes: this.order.dishes.lenght,
-      drinks: this.order.drinks.lenght,
-      clients: this.data.tableClients
-    };
-    this.waitersService.createOrderStatistics(orderStat).pipe(take(1)).subscribe();
-    this.closeDialog();
+    if(this.order.table > 0){
+      this.waitersService.createOrder(this.order).pipe(
+        take(1),
+      ).subscribe((response: any) => {
+        this.webSocketService.notifyOrderCreated(response.data, this.data.tableNumber);
+      });
+      const orderStat = {
+        orderNumber: this.order.number,
+        tableNumber: this.data.tableNumber,
+        dishes: this.order.dishes.lenght,
+        drinks: this.order.drinks.lenght,
+        clients: this.data.tableClients
+      };
+      this.waitersService.createOrderStatistics(orderStat).pipe(take(1)).subscribe();
+
+      this.closeDialog();
+    } else alert('Error creating order')
   }
 
 }

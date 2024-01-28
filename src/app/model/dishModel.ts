@@ -11,5 +11,5 @@ export interface IDish {
     FirstPlate = 2,
     SecondPlate = 3,
     SidePlate = 4,
-    Desset = 5
+    Dessert = 5
   }

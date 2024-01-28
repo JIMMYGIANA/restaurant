@@ -26,7 +26,6 @@ export class ReceiptComponent {
     private cashierService: CashierService,
     @Inject(MAT_DIALOG_DATA) public data: { receiptNumber: number }
   ) {
-    console.log(data.receiptNumber+'-------------');
     this.receipt$ = this.cashierService.readReceipt(data.receiptNumber).pipe(
       tap((receipt) => console.log(receipt))
     );

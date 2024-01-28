@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './components/login/login.component';
 import { RestaurantComponent } from './components/restaurant/restaurant.component';
@@ -18,7 +17,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import {Component} from '@angular/core';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { AuthInterceptor } from './services/auth-interceptor';
 import { KitchenComponent } from './components/kitchen/kitchen.component';
@@ -32,6 +31,12 @@ import { OrderTableComponent } from './components/restaurant/order-table/order-t
 import {MatExpansionModule} from '@angular/material/expansion';
 import { ReceiptComponent } from './components/cash/receipt/receipt.component';
 import { UserStatsComponent } from './components/cash/user-stats/user-stats.component';
+import { UserCrudComponent } from './components/cash/user-crud/user-crud.component';
+import { TableCrudComponent } from './components/cash/table-crud/table-crud.component';
+import { DrinkCrudComponent } from './components/cash/drink-crud/drink-crud.component';
+import { DishCrudComponent } from './components/cash/dish-crud/dish-crud.component';
+import { MenuComponent } from './components/menu/menu.component';
+import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
   declarations: [
@@ -50,7 +55,12 @@ import { UserStatsComponent } from './components/cash/user-stats/user-stats.comp
     DrinkComponent,
     OrderTableComponent,
     ReceiptComponent,
-    UserStatsComponent
+    UserStatsComponent,
+    UserCrudComponent,
+    TableCrudComponent,
+    DrinkCrudComponent,
+    DishCrudComponent,
+    MenuComponent
   ],
   imports: [
     BrowserModule,
@@ -66,7 +76,10 @@ import { UserStatsComponent } from './components/cash/user-stats/user-stats.comp
     FormsModule,
     MatDialogModule,
     MatTableModule,
-    MatExpansionModule
+    MatExpansionModule,
+    FormsModule,
+    ReactiveFormsModule,
+
   ],
   providers: [
     {

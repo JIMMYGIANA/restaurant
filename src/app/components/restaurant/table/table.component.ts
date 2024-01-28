@@ -27,7 +27,7 @@ export class TableComponent implements OnInit, OnDestroy {
   private clientSubscription: Subscription | undefined;
 
   setClients(){
-    if(this.clientsNumber == this.tableData.clients || this.clientsNumber == 0) return;
+    if(this.clientsNumber == this.tableData.clients || this.clientsNumber == 0 || this.clientsNumber > this.tableData.seats) return;
 
     this.waitersService.addClient({
       number: this.tableData.number,

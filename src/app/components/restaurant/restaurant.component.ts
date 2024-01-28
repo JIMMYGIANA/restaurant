@@ -26,7 +26,7 @@ export class RestaurantComponent implements OnInit, OnDestroy {
   protected readonly notification = this.webSocketService.on<IReceipt>('newReceipt');
 
   protected readonly notificationOrderReady = this.webSocketService.on<IOrder>('orderReady').pipe(
-    tap((order: any) => alert('Order '+order.data.orderNumber+'\nTable '+order.data.tableNumber+'\nReady!' ))
+    tap((order: any) => alert('Order '+order.data.orderNumber+'\nTable '+order.data.tableNumber+'\n'+ order.data.typeOrder+' ready!' ))
   );
  
   protected logout(){

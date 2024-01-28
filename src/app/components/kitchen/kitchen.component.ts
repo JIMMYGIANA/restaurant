@@ -52,8 +52,6 @@ export class KitchenComponent implements OnInit, OnDestroy {
       number: orderNumber,
       table: orderTable
     }).pipe(take(1)).subscribe(() => {
-      this.webSocketService.notifyOrderPreparing(orderNumber, orderTable);
-
 
       this.cooksService.readOrders().pipe(
         map(orders => orders.filter(order => order.orderPreparedCook == null)),

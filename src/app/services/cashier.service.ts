@@ -7,6 +7,7 @@ import { IDish } from '../model/dishModel';
 import { IReceipt } from '../model/receiptModel';
 import { IOrder } from '../model/orderModel';
 import { IOrderStatistics } from '../model/statisticsModels/orderStatisticsModel';
+import { IDrink } from '../model/drinkModel';
 
 @Injectable({
   providedIn: 'root',
@@ -82,5 +83,46 @@ export class CashierService {
     const params = new HttpParams()
             .set('userEmail', userEmail.toString());
     return this.http.get<IOrderStatistics[]>(`${this.baseUrl}/statistics/getServeStats`, {params});
+  }
+
+  // manage restaurant
+  createUser(userData: IUser){
+    return this.http.post(`${this.baseUrl}/users/createUser`, userData);
+  }
+
+  createTable(tableData: ITable){
+    return this.http.post(`${this.baseUrl}/tables/createTable`, tableData);
+  }
+
+  createDish(dishData: IDish){
+    return this.http.post(`${this.baseUrl}/menu/createDish`, dishData);
+  }
+
+  createDrink(drinkData: IDrink){
+    return this.http.post(`${this.baseUrl}/menu/createDrink`, drinkData);
+  }
+
+  deleteUser(userEmail: string){
+    const params = new HttpParams()
+            .set('userEmail', userEmail.toString());
+    return this.http.delete(`${this.baseUrl}/users/deleteUser`, {params});
+  }
+
+  deleteTable(tableNumber: number){
+    const params = new HttpParams()
+            .set('tableNumber', tableNumber.toString());
+    return this.http.delete(`${this.baseUrl}/tables/deleteTable`, {params});
+  }
+
+  deleteDish(dishNumber: number){
+    const params = new HttpParams()
+            .set('rdishNumber', dishNumber.toString());
+    return this.http.delete(`${this.baseUrl}/cashier/deleteDish`, {params});
+  }
+
+  deleteDrink(drinkNumber: number){
+    const params = new HttpParams()
+            .set('drinkNumber', drinkNumber.toString());
+    return this.http.delete(`${this.baseUrl}/cashier/deleteDrink`, {params});
   }
 }

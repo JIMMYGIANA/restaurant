@@ -1,0 +1,25 @@
+<h1>Menu</h1>
+
+<div *ngIf="userRole == UserRole.Cashier">
+    <button (click)="viewDishCreate()">New dish</button>
+</div>
+
+<div *ngFor="let dish of (dishes$ | async)" style="margin-top: 5px; margin-bottom: 5px; margin-left: 10px;">
+    <p><b>{{ dish.name }}</b>&nbsp;{{ getDishTypeString(dish.type) }}</p>
+    <p>Ingridients: {{ dish.description }}</p>
+    <p>Price: {{ dish.price }}&nbsp;€</p>
+</div>
+
+<div *ngIf="userRole == UserRole.Cashier">
+    <button (click)="viewDrinkCreate()">New drink</button>
+</div>
+
+<div *ngFor="let drink of (drinks$ | async)" style="margin-top: 5px; margin-bottom: 5px; margin-left: 10px;">
+    <p><b>{{ drink.name }}</b>&nbsp;{{ getDrinkTypeString(drink.type) }}&nbsp;{{ drink.isAlcoholic ? '18+' : '' }}</p>
+    <p>Ingridients: {{ drink.description }}</p>
+    <p>Price: {{ drink.price }}&nbsp;€</p>
+</div>
+
+<div *ngIf="userRole == UserRole.Cashier">
+    <button (click)="navigateToCash()">Cashier page</button>
+</div>

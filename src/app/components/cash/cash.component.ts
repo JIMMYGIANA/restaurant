@@ -1,4 +1,4 @@
-import { BehaviorSubject, Observable, combineLatest, map, take, repeatWhen, tap, repeat, filter } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, map, take, repeatWhen, tap, repeat, filter, defer } from 'rxjs';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CashierService } from 'src/app/services/cashier.service';
@@ -12,6 +12,10 @@ import { ReceiptComponent } from './receipt/receipt.component';
 import { MatDialog } from '@angular/material/dialog';
 import { IUser, UserRole } from 'src/app/model/userModel';
 import { UserStatsComponent } from './user-stats/user-stats.component';
+import { UserCrudComponent } from './user-crud/user-crud.component';
+import { TableCrudComponent } from './table-crud/table-crud.component';
+import { DishCrudComponent } from './dish-crud/dish-crud.component';
+import { DrinkCrudComponent } from './drink-crud/drink-crud.component';
 
 
 @Component({
@@ -24,16 +28,20 @@ export class CashComponent implements OnInit {
 
   protected panelOpenState = false;
 
+  protected UserRole = UserRole;
+
+  protected readonly userNotification$$ = new BehaviorSubject<number>(0);
+
+  protected readonly tableNotification$$ = new BehaviorSubject<number>(0);
+
   protected readonly receiptNotification$$ = new BehaviorSubject<number>(0);
 
-  protected readonly setClientNotification = this.webSocketService.on<any>('setClients');
+  protected readonly setClientNotification: Observable<any> = this.webSocketService.on<any>('setClients').pipe(
+    tap(() => console.log("SET_CLIENTS"))
+  );
 
   protected readonly newOrderNotification = this.webSocketService.on<IOrder>('newOrder').pipe(
     tap(() => console.log("NEW_ORDER")),
-  );
-
-  protected readonly orderPreparingNotification = this.webSocketService.on<IOrder>('orderPreparing').pipe(
-    tap(() => console.log("ORDER_PREP"))
   );
 
   protected readonly orderReadyNotification = this.webSocketService.on<IOrder>('orderReady').pipe(
@@ -44,27 +52,31 @@ export class CashComponent implements OnInit {
     tap(() => console.log("ORDER_SERVED"))
   );
 
-  protected readonly tables: Observable<ITable[]> = this.cashierService.readTables().pipe(
-    repeatWhen(() => this.receiptNotification$$),
+  protected readonly tables$: Observable<ITable[]> = defer(() => this.cashierService.readTables()).pipe(
+    repeatWhen(() => this.newOrderNotification),
     repeatWhen(() => this.setClientNotification),
-    tap(() => console.log('---------------------------'))
+    repeatWhen(() => this.orderReadyNotification),
+    repeatWhen(() => this.tableNotification$$),
+    repeatWhen(() => this.receiptNotification$$)
   );
 
-  protected readonly orders: Observable<IOrder[]> = this.cashierService.readOrders().pipe(
+  protected readonly orders: Observable<IOrder[]> = defer(() => this.cashierService.readOrders()).pipe(
     repeatWhen(() => this.newOrderNotification),
-    repeatWhen(() => this.orderPreparingNotification),
     repeatWhen(() => this.orderReadyNotification),
   );
 
-  protected readonly ordersStatistics: Observable<IOrderStatistics[]> = this.cashierService.readOrdersStatistics().pipe(
+  protected readonly ordersStatistics: Observable<IOrderStatistics[]> = defer(() => this.cashierService.readOrdersStatistics()).pipe(
     repeatWhen(() => this.newOrderNotification),
-    repeatWhen(() => this.orderPreparingNotification),
     repeatWhen(() => this.orderReadyNotification),
   );
 
-  protected readonly receipts$: Observable<IReceipt[]> = this.cashierService.readReceipts();
+  protected readonly receipts$: Observable<IReceipt[]> = defer(() => this.cashierService.readReceipts()).pipe(
+    repeatWhen(() => this.receiptNotification$$)
+  );
 
-  protected readonly users$: Observable<IUser[]> = this.cashierService.readUsers();
+  protected readonly users$: Observable<IUser[]> = defer(() => this.cashierService.readUsers()).pipe(
+    repeatWhen(() => this.userNotification$$)
+  );
 
   protected logout() {
     this.userService.logout();
@@ -77,10 +89,9 @@ export class CashComponent implements OnInit {
     private cashierService: CashierService,
     private webSocketService: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) {
     this.orders.forEach(t => t.map(order => console.log(order.dishes.length)));
-
   }
 
   ngOnDestroy(): void {
@@ -90,15 +101,9 @@ export class CashComponent implements OnInit {
   ngOnInit(): void {
     this.webSocketService.connect();
 
-    this.receiptNotification$$.subscribe((item) => {
-      console.log(item)
-    });
     this.newOrderNotification.subscribe();
-    this.orderPreparingNotification.subscribe();
     this.orderReadyNotification.subscribe();
-    this.setClientNotification.subscribe(() => {
-      console.log("Set clients")
-    });
+    this.setClientNotification.subscribe();
   }
 
   createReceipt(tableNumber: number): void {
@@ -136,5 +141,42 @@ export class CashComponent implements OnInit {
       }
     })
   }
+
+  viewUserCreate() : void {
+    const dialogRef = this.dialog.open(UserCrudComponent, {
+      width: '90%',  
+      height: '90vh'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // 'result' contains the data passed when the dialog is closed
+      console.log('Dialog closed with result:', result);
+  
+      this.userNotification$$.next(0);
+      // Add your logic here to handle the result or perform any other actions
+    });
+  }
+
+  viewTableCreate() : void {
+    const dialogRef = this.dialog.open(TableCrudComponent, {
+      width: '90%',  
+      height: '90vh'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // 'result' contains the data passed when the dialog is closed
+      console.log('Dialog closed with result:', result);
+  
+      this.tableNotification$$.next(0);
+      // Add your logic here to handle the result or perform any other actions
+    });
+  }
+
+  navigateToMenu(): void {
+    // Navigate to the 'menu' route with data as a route parameter
+    this.router.navigate(['/menu', { userRole: UserRole.Cashier }]);
+  }
+
+ 
 
 }

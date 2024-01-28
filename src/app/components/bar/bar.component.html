@@ -10,7 +10,7 @@
       
         <label>Order Number: {{ order.number }}</label>
         
-        <div *ngIf="order.orderTakenCook == null; else serveOrder">
+        <div *ngIf="order.orderTakenDrink == null; else serveOrder">
           <button (click)="takeOrder(order.number, order.table)">Take</button>
         </div>
         
@@ -22,8 +22,9 @@
           <button (click)="completeOrder(order.number, order.table)">Serve</button>
         </ng-template>
 
-        <button (click)="logout()"></button>
+        
     </div>
   </div>
+  <button (click)="logout()">LOGOUT</button>
 
 </div>

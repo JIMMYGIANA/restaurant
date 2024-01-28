@@ -2,7 +2,8 @@
 <div fxLayout="row" fxLayoutAlign="start" style="margin-bottom: 30px;">
   <div fxFlex="column">
     <h2 style="margin-left: 10px;">TABLES</h2>
-    <div *ngFor="let table of (tables | async); let i = index" style="width: 300px; margin: 30px; ">
+    <button (click)="viewTableCreate()">New</button>
+    <div *ngFor="let table of (tables$ | async); let i = index" style="width: 300px; margin: 30px; ">
 
       <div *ngIf="table.clients == 0; else ocupiedSection">
         <mat-card-subtitle style="color: green;">
@@ -29,13 +30,19 @@
 
     </div>
 
+    <h2>MENU</h2> 
+    <button (click)="navigateToMenu()">View</button>
+
     <h2 style="margin-left: 10px;">USERS</h2>
+    <button (click)="viewUserCreate()">New</button>
 
     <div *ngFor="let user of (users$ | async); let i = index" style="width: 300px; margin: 30px; ">
-      <b>{{ user.role }} </b>
-      <p>{{ user.name }} {{ user.surname}}</p>
-      <p>Email: {{ user.email }}</p>
-      <button (click)="viewUserStats(user.email, user.role)">View stats</button>
+      <div *ngIf="user.role != UserRole.Cashier">
+        <b>{{ user.role }} </b>
+        <p>{{ user.username }}</p>
+        <p>Email: {{ user.email }}</p>
+        <button (click)="viewUserStats(user.email, user.role)">View stats</button>
+      </div>
     </div>
 
     <h2 style="margin-left: 10px;">RECEIPTS</h2>
@@ -75,10 +82,8 @@
 
       <p>Creation: {{ order.orderCreation }}</p>
 
-      <ng-template *ngIf="order.dishes.length">
-        <p>Dishes in preparation: {{ order.orderTakenCook }}</p>
-        <p>Dishes ready: {{ order.orderPreparedCook }}</p>
-      </ng-template> 
+      <p>Dishes in preparation: {{ order.orderTakenCook }}</p>
+      <p>Dishes ready: {{ order.orderPreparedCook }}</p>
         
       <ng-template *ngIf="order.drinks.length > 0">
         <p>Drinks in preparation: {{ order.orderTakenDrink }}</p>

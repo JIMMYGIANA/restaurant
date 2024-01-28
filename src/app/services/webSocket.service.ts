@@ -46,17 +46,12 @@ export class WebSocketService {
     this.emit('newReceipt', { event: 'newReceipt', data: { receiptNumber: receiptNumber, tableNumber: tableNumber } });
   }
 
-  //orderPreparing
-  notifyOrderPreparing(orderNumber: number, tableNumber: number): void {
-    this.emit('orderPreparing', { event: 'orderPreparing', data: { orderNumber: orderNumber, tableNumber: tableNumber } });
-  }
-
   //orderReady
   notifyOrderReady(orderNumber: number, tableNumber: number, typeOrder: string): void {
     this.emit('orderReady', { event: 'orderReady', data: { orderNumber: orderNumber, tableNumber: tableNumber, typeOrder: typeOrder } });
   }
 
-  //orderReady
+  //orderServed
   notifyOrderServed(orderNumber: number, tableNumber: number): void {
     this.emit('orderServed', { event: 'orderServed', data: { orderNumber: orderNumber, tableNumber: tableNumber } });
   }
