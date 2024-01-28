@@ -1,18 +1,13 @@
-import { CdkTableDataSourceInput } from '@angular/cdk/table';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, combineLatest, forkJoin, from, map, of, switchMap, take } from 'rxjs';
-import { IDish } from 'src/app/model/dishModel';
+import { Router } from '@angular/router';
+import { BehaviorSubject, Observable, combineLatest, defer, map, switchMap, take } from 'rxjs';
+import { distinctUntilChanged, shareReplay, takeUntil, tap } from 'rxjs/operators';
 import { IOrder } from 'src/app/model/orderModel';
 import { CooksService } from 'src/app/services/cooks.service';
 import { RestaurantService } from 'src/app/services/restaurant.service';
-import { distinctUntilChanged, filter, groupBy, mergeMap, shareReplay, takeUntil, tap, toArray } from 'rxjs/operators';
-import { IDrink } from 'src/app/model/drinkModel';
-import { WebSocketService } from 'src/app/services/webSocket.service';
-import { Router } from '@angular/router';
 import { UserService } from 'src/app/services/user.service';
-
-
-
+import { WebSocketService } from 'src/app/services/webSocket.service';
+import { ReactiveComponent } from '../reactive.component';
 
 @Component({
   selector: 'app-kitchen',
@@ -20,22 +15,21 @@ import { UserService } from 'src/app/services/user.service';
   styleUrls: ['./kitchen.component.css'],
   changeDetection: ChangeDetectionStrategy.Default,
 })
-export class KitchenComponent implements OnInit, OnDestroy {
+export class KitchenComponent extends ReactiveComponent implements OnInit, OnDestroy {
 
-  private readonly onDestroy$ = new Subject<void>();
-
-  protected orders$: Observable<IOrder[]> = this.cooksService.readOrders().pipe(
+  protected readonly orders$$ = new BehaviorSubject<IOrder[]>([]);
+  protected readonly orders$ = defer(() => {
+    return this._cooksService.readOrders();
+  }).pipe(
     map(orders => orders.filter(order => order.orderPreparedCook == null)),
     shareReplay(1)
   );
 
-  protected readonly orders$$ = new BehaviorSubject<IOrder[]>([]);
-
-  protected readonly tableNumber$: Observable<number> = this.cooksService.tableNumber().pipe(distinctUntilChanged(), shareReplay(1));
+  protected readonly tableNumber$: Observable<number> = this._cooksService.tableNumber().pipe(distinctUntilChanged(), shareReplay(1));
 
   protected readonly ordersGrouped$: Observable<{ key: string, items: IOrder[] }[]> = combineLatest([this.orders$$, this.tableNumber$])
     .pipe(
-      takeUntil(this.onDestroy$),
+      takeUntil(this.destroyed$),
       map(([orders, tableNumber]) => {
         const groupedOrders: Record<string, IOrder[]> = orders.reduce((acc: Record<string, IOrder[]>, order) => {
           const key = order.table.toString();
@@ -48,14 +42,14 @@ export class KitchenComponent implements OnInit, OnDestroy {
     );
 
   protected takeOrder(orderNumber: number, orderTable: number) {
-    this.cooksService.takeOrder({
+    this._cooksService.takeOrder({
       number: orderNumber,
       table: orderTable
     }).pipe(take(1)).subscribe(() => {
-      this.webSocketService.notifyOrderPreparing(orderNumber, orderTable);
+      this._webSocketService.notifyOrderPreparing(orderNumber, orderTable);
 
 
-      this.cooksService.readOrders().pipe(
+      this._cooksService.readOrders().pipe(
         map(orders => orders.filter(order => order.orderPreparedCook == null)),
         shareReplay(1),
         tap(orders => this.orders$$.next(orders))
@@ -64,73 +58,74 @@ export class KitchenComponent implements OnInit, OnDestroy {
   }
 
   protected completeOrder(orderNumber: number, orderTable: number) {
-    this.cooksService.completeOrder({
+    this._cooksService.completeOrder({
       number: orderNumber,
       table: orderTable
     }).pipe(take(1)).subscribe(() => {
 
-    this.webSocketService.notifyOrderReady(orderNumber, orderTable, 'Dishes');
-    
-    this.cooksService.readOrders().pipe(
-      map(orders => orders.filter(order => order.orderPreparedCook == null)),
-      shareReplay(1),
-      tap(orders => this.orders$$.next(orders))
-    ).subscribe();
-  });
+      this._webSocketService.notifyOrderReady(orderNumber, orderTable, 'Dishes');
 
-    this.cooksService.orderDishesPreparation({
+      this._cooksService.readOrders().pipe(
+        map(orders => orders.filter(order => order.orderPreparedCook == null)),
+        shareReplay(1),
+        tap(orders => this.orders$$.next(orders))
+      ).subscribe();
+    });
+
+    this._cooksService.orderDishesPreparation({
       orderNumber: orderNumber,
       tableNumber: orderTable
     }).pipe(take(1)).subscribe();
   }
 
   protected logout() {
-    this.userService.logout();
+    this._userService.logout();
     this.router.navigate(['']);
   }
 
   constructor(
     protected readonly router: Router,
-    private userService: UserService,
-    private restaurantService: RestaurantService,
-    private cooksService: CooksService,
-    private webSocketService: WebSocketService,
-    private cdr: ChangeDetectorRef
+    private readonly _userService: UserService,
+    private readonly _restaurantService: RestaurantService,
+    private readonly _cooksService: CooksService,
+    private readonly _webSocketService: WebSocketService,
+    private readonly _cdr: ChangeDetectorRef
   ) {
-    this.cdr.markForCheck();
+    super();
   }
 
-  ngOnInit(): void {
-    this.webSocketService.connect();
+  public ngOnInit(): void {
 
     // Subscribe to WebSocket events
-    this.webSocketService.on<IOrder>('newOrder').pipe(
-      switchMap((orderData: any) => 
-        this.cooksService.readOrder(orderData.data.orderNumber, orderData.data.tableNumber))
-    ).subscribe(newOrder => {
-      console.log('NEW ORDER ----- ' + newOrder);
-      this.orders$$.next([newOrder, ...this.orders$$.value]);
-      this.cdr.markForCheck();
-    });
+    this._webSocketService
+      .on<IOrder>('newOrder')
+      .pipe(
+        switchMap((orderData: any) => {
+          return this._cooksService.readOrder(orderData.data.orderNumber, orderData.data.tableNumber);
+        }))
+      .subscribe(newOrder => {
+        console.log('NEW ORDER ----- ' + newOrder);
+        this.orders$$.next([newOrder, ...this.orders$$.value]);
+        this._cdr.markForCheck();
+      });
 
-    this.webSocketService.on<IOrder>('orderPreparing').subscribe(() => {
+    this._webSocketService.on<IOrder>('orderPreparing').subscribe(() => {
       // Handle the new order, maybe update your orders list
       console.log('Dishes prepering');
     });
 
-    this.webSocketService.on<IOrder>('orderReady').subscribe(() => {
+    this._webSocketService.on<IOrder>('orderReady').subscribe(() => {
       // Handle the new order, maybe update your orders list
       console.log('Dishes completed');
     });
 
-    this.orders$.pipe(
-      tap(orders => this.orders$$.next(orders))
-    ).subscribe();
+    this.orders$.subscribe(orders => this.orders$$.next(orders));
+
+    this._webSocketService.connect();
   }
 
-  ngOnDestroy(): void {
-    this.webSocketService.disconnect();
-    this.onDestroy$.next();
-    this.onDestroy$.complete();
+  public override ngOnDestroy(): void {
+    super.ngOnDestroy();
+    this._webSocketService.disconnect();
   }
 }

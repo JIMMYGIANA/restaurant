@@ -1,25 +1,40 @@
 <h1 style="align-items: center; margin-left: 5%; margin-top: 5%;">Welcome!</h1>
 
-<form [formGroup]="testForm" (ngSubmit)="login()">
-  <div class="example-container" style="align-items: center; margin-left: 3%;">
+<form [formGroup]="testForm"
+      (ngSubmit)="login()">
+  <div class="example-container"
+       style="align-items: center; margin-left: 3%;">
     <mat-form-field>
       <mat-label>Enter your email</mat-label>
-      <input matInput placeholder="pat@example.com" [formControl]="email" required>
+      <input matInput
+             placeholder="pat@example.com"
+             [formControl]="email"
+             required>
       <mat-error *ngIf="email.invalid">{{getErrorMessage()}}</mat-error>
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>Enter your password</mat-label>
-      <input matInput [type]="hide ? 'password' : 'text'" [formControl]="password" required>
-      <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+      <input matInput
+             [type]="hide ? 'password' : 'text'"
+             [formControl]="password"
+             required>
+      <button mat-icon-button
+              matSuffix
+              (click)="hide = !hide"
+              [attr.aria-label]="'Hide password'"
+              [attr.aria-pressed]="hide">
         <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
       </button>
     </mat-form-field>
     &nbsp;
-    <button mat-raised-button color="primary" type="submit">Login</button>
+    <button mat-raised-button
+            color="primary"
+            type="submit">Login</button>
 
   </div>
-</form> 
-  
+</form>
 
-<a class="btn" routerLink="/restaurant">Restaurant</a>
+
+<a class="btn"
+   routerLink="/restaurant">Restaurant</a>

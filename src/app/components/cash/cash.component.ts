@@ -1,16 +1,16 @@
-import { BehaviorSubject, Observable, combineLatest, map, take, repeatWhen, tap, repeat, filter } from 'rxjs';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { CashierService } from 'src/app/services/cashier.service';
-import { ITable } from 'src/app/model/tableModel';
-import { IReceipt } from 'src/app/model/receiptModel';
-import { IOrder } from 'src/app/model/orderModel';
-import { IOrderStatistics } from 'src/app/model/statisticsModels/orderStatisticsModel';
-import { WebSocketService } from 'src/app/services/webSocket.service';
-import { UserService } from 'src/app/services/user.service';
-import { ReceiptComponent } from './receipt/receipt.component';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { BehaviorSubject, Observable, repeatWhen, take, tap } from 'rxjs';
+import { IOrder } from 'src/app/model/orderModel';
+import { IReceipt } from 'src/app/model/receiptModel';
+import { IOrderStatistics } from 'src/app/model/statisticsModels/orderStatisticsModel';
+import { ITable } from 'src/app/model/tableModel';
 import { IUser, UserRole } from 'src/app/model/userModel';
+import { CashierService } from 'src/app/services/cashier.service';
+import { UserService } from 'src/app/services/user.service';
+import { WebSocketService } from 'src/app/services/webSocket.service';
+import { ReceiptComponent } from './receipt/receipt.component';
 import { UserStatsComponent } from './user-stats/user-stats.component';
 
 
@@ -44,13 +44,13 @@ export class CashComponent implements OnInit {
     tap(() => console.log("ORDER_SERVED"))
   );
 
-  protected readonly tables: Observable<ITable[]> = this.cashierService.readTables().pipe(
+  protected readonly tables$: Observable<ITable[]> = this.cashierService.readTables().pipe(
     repeatWhen(() => this.receiptNotification$$),
     repeatWhen(() => this.setClientNotification),
     tap(() => console.log('---------------------------'))
   );
 
-  protected readonly orders: Observable<IOrder[]> = this.cashierService.readOrders().pipe(
+  protected readonly orders$: Observable<IOrder[]> = this.cashierService.readOrders().pipe(
     repeatWhen(() => this.newOrderNotification),
     repeatWhen(() => this.orderPreparingNotification),
     repeatWhen(() => this.orderReadyNotification),
@@ -79,8 +79,6 @@ export class CashComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog
   ) {
-    this.orders.forEach(t => t.map(order => console.log(order.dishes.length)));
-
   }
 
   ngOnDestroy(): void {
@@ -116,21 +114,21 @@ export class CashComponent implements OnInit {
 
   }
 
-  viewReceiptDetails(receiptNumber: number): void { 
+  viewReceiptDetails(receiptNumber: number): void {
     this.dialog.open(ReceiptComponent, {
-      width: '90%',  
+      width: '90%',
       height: '90vh',
-      data: { 
+      data: {
         receiptNumber: receiptNumber
       }
     })
   }
 
-  viewUserStats(userEmail: string, userRole: UserRole) : void {
+  viewUserStats(userEmail: string, userRole: UserRole): void {
     this.dialog.open(UserStatsComponent, {
-      width: '90%',  
+      width: '90%',
       height: '90vh',
-      data: { 
+      data: {
         userEmail: userEmail,
         userRole: userRole
       }

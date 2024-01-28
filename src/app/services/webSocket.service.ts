@@ -1,17 +1,14 @@
 import { Injectable } from '@angular/core';
 import { filter, map, Observable } from 'rxjs';
-import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { IOrder } from '../model/orderModel';
+import { webSocket } from 'rxjs/webSocket';
 
 @Injectable({
   providedIn: 'root',
 })
 export class WebSocketService {
-  private socket$: WebSocketSubject<any>;
+  private readonly socket$ = webSocket<any>('ws://localhost:4000'); // Replace with your WebSocket URL;
 
-  constructor() {
-    this.socket$ = webSocket('ws://localhost:4000'); // Replace with your WebSocket URL
-  }
+  constructor() { }
 
   connect(): void {
     this.socket$.next({}); // Initiate the connection
@@ -22,7 +19,7 @@ export class WebSocketService {
   }
 
   on<T>(eventName: string): Observable<T> {
-    return this.socket$.asObservable().pipe(
+    return this.socket$.pipe(
       filter((message) => message.event === eventName),
       map((message) => message.data as T)
     );
@@ -35,14 +32,14 @@ export class WebSocketService {
   // newOrder
   notifyOrderCreated(orderNumber: number, tableNumber: number): void {
     // You can customize the event name and data structure as needed
-    console.log('orderNumber --- '+orderNumber+' tableNumber --- '+tableNumber);
+    console.log('orderNumber --- ' + orderNumber + ' tableNumber --- ' + tableNumber);
     this.emit('newOrder', { event: 'newOrder', data: { orderNumber: orderNumber, tableNumber: tableNumber } });
   }
 
   // newReceipt
   notifyReceiptCreated(receiptNumber: number, tableNumber: number): void {
     // You can customize the event name and data structure as needed
-    console.log('receiptNumber --- '+receiptNumber+' tableNumber --- '+tableNumber);
+    console.log('receiptNumber --- ' + receiptNumber + ' tableNumber --- ' + tableNumber);
     this.emit('newReceipt', { event: 'newReceipt', data: { receiptNumber: receiptNumber, tableNumber: tableNumber } });
   }
 

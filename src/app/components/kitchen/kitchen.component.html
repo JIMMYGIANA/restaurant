@@ -2,30 +2,30 @@
 
 <h2 style="margin-left: 10px;">ORDERS</h2>
 
-<div *ngFor="let group of ordersGrouped$ | async" style="margin-bottom: 20px;">
+<div *ngFor="let group of ordersGrouped$ | async"
+     style="margin-bottom: 20px;">
   <div style="font-weight: bold;">Table {{ group.key }}</div>
-  <div *ngFor="let order of group.items" style="margin-left: 20px;">
+  <div *ngFor="let order of group.items"
+       style="margin-left: 20px;">
 
     <div *ngIf="order.orderPreparedCook == null">
-      
-        <label>Order Number: {{ order.number }}</label>
-        
-        <div *ngIf="order.orderTakenCook == null; else serveOrder">
-          <button (click)="takeOrder(order.number, order.table)">Take</button>
-        </div>
-        
-        <ng-template #serveOrder>
-          <p>Production time: {{ order.dishesProductionTime }}</p>
-          <div *ngFor="let dish of order.dishes">
-            <app-dish [dishNumber]="dish"></app-dish>
-          </div>
-          <button (click)="completeOrder(order.number, order.table)">Completed</button>
-        </ng-template>
 
-        
+      <label>Order Number: {{ order.number }}</label>
+
+      <div *ngIf="order.orderTakenCook == null; else serveOrder">
+        <button (click)="takeOrder(order.number, order.table)">Take</button>
+      </div>
+
+      <ng-template #serveOrder>
+        <p>Production time: {{ order.dishesProductionTime }}</p>
+        <div *ngFor="let dish of order.dishes">
+          <app-dish [dishNumber]="dish"></app-dish>
+        </div>
+        <button (click)="completeOrder(order.number, order.table)">Completed</button>
+      </ng-template>
+
+
     </div>
   </div>
 
 </div>
-
-<button (click)="logout()">LOGOUT</button>

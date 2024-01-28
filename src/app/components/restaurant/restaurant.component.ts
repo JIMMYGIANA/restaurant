@@ -2,12 +2,12 @@ import { UserService } from 'src/app/services/user.service';
 
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, repeat, repeatWhen, switchMap, tap } from 'rxjs';
+import { Observable, repeatWhen, tap } from 'rxjs';
+import { IOrder } from 'src/app/model/orderModel';
+import { IReceipt } from 'src/app/model/receiptModel';
 import { ITable } from 'src/app/model/tableModel';
 import { WaitersService } from 'src/app/services/waiters.service';
 import { WebSocketService } from 'src/app/services/webSocket.service';
-import { IOrder } from 'src/app/model/orderModel';
-import { IReceipt } from 'src/app/model/receiptModel';
 
 @Component({
   selector: 'app-restaurant',
@@ -17,8 +17,6 @@ import { IReceipt } from 'src/app/model/receiptModel';
 })
 export class RestaurantComponent implements OnInit, OnDestroy {
 
-  protected readonly restaurantName: string = 'Jimmy\'s reastaurant';
-
   protected readonly tables: Observable<ITable[]> = this.waitersService.readTables().pipe(
     repeatWhen(() => this.notification)
   );
@@ -26,15 +24,15 @@ export class RestaurantComponent implements OnInit, OnDestroy {
   protected readonly notification = this.webSocketService.on<IReceipt>('newReceipt');
 
   protected readonly notificationOrderReady = this.webSocketService.on<IOrder>('orderReady').pipe(
-    tap((order: any) => alert('Order '+order.data.orderNumber+'\nTable '+order.data.tableNumber+'\nReady!' ))
+    tap((order: any) => alert('Order ' + order.data.orderNumber + '\nTable ' + order.data.tableNumber + '\nReady!'))
   );
- 
-  protected logout(){
+
+  protected logout() {
     this.userService.logout();
     this.router.navigate(['']);
   }
 
-  protected orders(){
+  protected orders() {
     this.router.navigate(['/orders']);
   }
 
@@ -43,8 +41,8 @@ export class RestaurantComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private waitersService: WaitersService,
     private webSocketService: WebSocketService
-    ){
-      this.tables.forEach(t => console.log(t));
+  ) {
+    this.tables.forEach(t => console.log(t));
   }
 
 
@@ -55,7 +53,7 @@ export class RestaurantComponent implements OnInit, OnDestroy {
       // Handle the new order, maybe update your orders list
       console.log('Receipt:');
     });
-    
+
     this.notificationOrderReady.subscribe(() => {
       console.log('Order Ready');
     });
@@ -65,7 +63,7 @@ export class RestaurantComponent implements OnInit, OnDestroy {
       console.log('New Order Arrived:');
     });
 
-    
+
 
   }
 

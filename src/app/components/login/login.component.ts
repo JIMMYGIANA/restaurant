@@ -1,9 +1,8 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
-import { take } from 'rxjs';
+import { from, switchMap } from 'rxjs';
 import { UserRole } from 'src/app/model/userModel';
 import { UserService } from 'src/app/services/user.service';
 
@@ -19,17 +18,14 @@ export class LoginComponent {
   protected hide = true;
 
 
-  testForm: FormGroup;
+  readonly testForm: FormGroup = this._fb.group({ name: ['', Validators.required], });
 
   constructor(
-    private fb: FormBuilder,
-    protected readonly router: Router,
-    private userService: UserService,
-    private cookieService: CookieService
+    private readonly _fb: FormBuilder,
+    private readonly _router: Router,
+    private readonly _userService: UserService,
+    private readonly _cookieService: CookieService
   ) {
-    this.testForm = this.fb.group({
-      name: ['', Validators.required],
-    });
   }
 
   submitForm(): void {
@@ -45,69 +41,25 @@ export class LoginComponent {
   }
 
   login(): void {
-    console.log("dio login")
-    if (this.email.valid && this.password.valid) {
-      const credentials = { email: this.email.value, password: this.password.value };
 
-      this.userService.login(credentials).subscribe(
-        (response) => {
-          console.log('Observable emitted value:', response);
-          this.handleLoginSuccess(response);
-        },
-        (error) => {
-          console.error('Authentication error:', error);
+    console.log("dio login");
 
-          if (error instanceof HttpErrorResponse) {
-            // Handle HTTP errors (status code, etc.)
-            console.error('HTTP Error Status:', error.status);
-            console.error('HTTP Error Message:', error.message);
-            // You can extract more information from the error object if needed
-          } else {
-            // Handle non-HTTP errors
-            console.error('Non-HTTP Error:', error);
+    if (!this.email.valid || !this.password.valid)
+      return;
+
+    const credentials = { email: this.email.value, password: this.password.value };
+    this._userService
+      .login(credentials)
+      .pipe(
+        switchMap(response => {
+          switch (response.userRole) {
+            case UserRole.Waiters: return from(this._router.navigate(['/restaurant']));
+            case UserRole.Cashier: return from(this._router.navigate(['/cash']));
+            case UserRole.Bartenders: return from(this._router.navigate(['/bar']));
+            case UserRole.Cook: return from(this._router.navigate(['/kitchen']));
+            default: return from(this._router.navigate(['/menu']));
           }
-
-          // Provide user-friendly feedback or redirect to an error page
-          // For example, set a variable for displaying an error message in the UI
-          // this.loginError = 'Invalid username or password';
-        },
-        () => {
-          console.log('Observable completed'); // Ensure this log is reached
-        }
-      );
-
-    }
-  }
-
-  handleLoginSuccess(response: any): void {
-    const token = response.token;
-    
-    if(this.cookieService.get('authToken') != null){
-      this.userService.logout();
-    }
-
-    this.cookieService.set('authToken', token);
-    
-    switch (response.userRole) {
-      case UserRole.Waiters:
-        this.router.navigate(['/restaurant']);
-        break;
-
-      case UserRole.Cashier:
-        this.router.navigate(['/cash']);
-        break;
-
-      case UserRole.Bartenders:
-        this.router.navigate(['/bar']);
-        break;
-
-      case UserRole.Cook:
-        this.router.navigate(['/kitchen']);
-        break;
-      default:
-        this.router.navigate(['/menu']);
-        break;
-    }
-    
+        }))
+      .subscribe();
   }
 }
