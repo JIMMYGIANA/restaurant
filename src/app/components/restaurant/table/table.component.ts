@@ -67,12 +67,13 @@ export class TableComponent implements OnInit, OnDestroy {
   }
 
   openOrderMenuDialog(): void {
+
     this.dialog.open(OrderMenuComponent, {
       width: '90%',  
       height: '90vh',
       data: { 
-        tableNumber: this.tableData.number, 
-        tableClients: this.tableData.clients, 
+        tableNumber: this.tableNumber, 
+        tableClients: this.clientsNumber 
       }
     });
   }

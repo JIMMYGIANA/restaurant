@@ -1,4 +1,4 @@
-import { BehaviorSubject, Observable, combineLatest, map, take, repeatWhen, tap, repeat, filter, defer } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, map, take, repeatWhen, tap, repeat, filter, defer, merge } from 'rxjs';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CashierService } from 'src/app/services/cashier.service';
@@ -53,21 +53,15 @@ export class CashComponent implements OnInit {
   );
 
   protected readonly tables$: Observable<ITable[]> = defer(() => this.cashierService.readTables()).pipe(
-    repeatWhen(() => this.newOrderNotification),
-    repeatWhen(() => this.setClientNotification),
-    repeatWhen(() => this.orderReadyNotification),
-    repeatWhen(() => this.tableNotification$$),
-    repeatWhen(() => this.receiptNotification$$)
+    repeatWhen(() => merge(this.newOrderNotification, this.setClientNotification, this.orderReadyNotification, this.tableNotification$$, this.receiptNotification$$))
   );
 
   protected readonly orders: Observable<IOrder[]> = defer(() => this.cashierService.readOrders()).pipe(
-    repeatWhen(() => this.newOrderNotification),
-    repeatWhen(() => this.orderReadyNotification),
+    repeatWhen(() => merge(this.newOrderNotification, this.orderReadyNotification))
   );
 
   protected readonly ordersStatistics: Observable<IOrderStatistics[]> = defer(() => this.cashierService.readOrdersStatistics()).pipe(
-    repeatWhen(() => this.newOrderNotification),
-    repeatWhen(() => this.orderReadyNotification),
+    repeatWhen(() => merge(this.newOrderNotification, this.orderReadyNotification)),
   );
 
   protected readonly receipts$: Observable<IReceipt[]> = defer(() => this.cashierService.readReceipts()).pipe(
@@ -114,7 +108,7 @@ export class CashComponent implements OnInit {
     ).subscribe((response: any) => {
       this.webSocketService.notifyReceiptCreated(response.data, tableNumber);
       this.receiptNotification$$.next(0);
-      this.viewReceiptDetails(response.data);
+      //this.viewReceiptDetails(response.data);
     });
 
     this.cdr.detectChanges();

@@ -8,17 +8,22 @@
                 <b>Order number{{ order.number }}</b>
                 <p>Creation: {{ order.orderCreation }}</p>
 
-                <b>Bar</b>
-                <p>Preparation: {{ order.orderTakenDrink }}</p>
-                <p style="color: orange;">Production time: {{ order.dishesProductionTime }}</p>
-                <p>Completed: {{ order.orderPreparedDrink }}</p>
+                <div *ngIf="order.orderTakenDrink">
+                    <b>Bar</b>
+                    <p>Preparation: {{ order.orderTakenDrink }}</p>
+                    <p style="color: orange;">Production time: {{ order.dishesProductionTime }}</p>
+                    <p>Completed: {{ order.orderPreparedDrink }}</p>
+                </div>
+                
+                <div *ngIf="order.orderTakenCook">
+                    <b>Kitchen</b>
+                    <p>Preparation: {{ order.orderTakenCook }}</p>
+                    <p style="color: orange;">Production time: {{ order.dishesProductionTime }}</p>
+                    <p>Completed: {{ order.orderPreparedCook }}</p>
+                </div>
+                
 
-                <b>Kitchen</b>
-                <p>Preparation: {{ order.orderTakenCook }}</p>
-                <p style="color: orange;">Production time: {{ order.dishesProductionTime }}</p>
-                <p>Completed: {{ order.orderPreparedCook }}</p>
-
-                <div *ngIf="order.orderPreparedCook != null && order.orderPreparedDrink != null">
+                <div *ngIf="(order.orderPreparedCook != null || !order.dishes.length) && (order.orderPreparedDrink != null || !order.drinks.length)">
                     <button (click)="serveOrder(order.number, order.table)">Serve</button>
                 </div>
 

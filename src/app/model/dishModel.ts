@@ -4,6 +4,7 @@ export interface IDish {
     description: string;
     type: number;
     price: number;
+    productionTime: number;
   }
   
   export enum DishType {

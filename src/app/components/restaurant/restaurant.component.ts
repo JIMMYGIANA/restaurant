@@ -2,7 +2,7 @@ import { UserService } from 'src/app/services/user.service';
 
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, repeat, repeatWhen, switchMap, tap } from 'rxjs';
+import { Observable, defer, repeat, repeatWhen, switchMap, tap } from 'rxjs';
 import { ITable } from 'src/app/model/tableModel';
 import { WaitersService } from 'src/app/services/waiters.service';
 import { WebSocketService } from 'src/app/services/webSocket.service';
@@ -19,11 +19,13 @@ export class RestaurantComponent implements OnInit, OnDestroy {
 
   protected readonly restaurantName: string = 'Jimmy\'s reastaurant';
 
-  protected readonly tables: Observable<ITable[]> = this.waitersService.readTables().pipe(
-    repeatWhen(() => this.notification)
+  protected readonly tables: Observable<ITable[]> = defer(() => this.waitersService.readTables()).pipe(
+    repeatWhen(() => this.notification$)
   );
 
-  protected readonly notification = this.webSocketService.on<IReceipt>('newReceipt');
+  protected readonly notification$ = defer(() => this.webSocketService.on<IReceipt>('newReceipt')).pipe(
+    repeatWhen(() => this.tables)
+  );
 
   protected readonly notificationOrderReady = this.webSocketService.on<IOrder>('orderReady').pipe(
     tap((order: any) => alert('Order '+order.data.orderNumber+'\nTable '+order.data.tableNumber+'\n'+ order.data.typeOrder+' ready!' ))
@@ -51,9 +53,17 @@ export class RestaurantComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.webSocketService.connect();
 
-    this.notification.subscribe(() => {
-      // Handle the new order, maybe update your orders list
-      console.log('Receipt:');
+    this.notification$.subscribe({
+      next: (value) => {
+        console.log(`Next value: ${value}`);
+      },
+      error: (err: any) => {
+        console.error(`Error: ${err}`);
+      },
+      complete: () => {
+        console.log('Observable completed');
+        // This block will be executed when the observable completes
+      },
     });
     
     this.notificationOrderReady.subscribe(() => {
@@ -64,8 +74,6 @@ export class RestaurantComponent implements OnInit, OnDestroy {
       // Handle the new order, maybe update your orders list
       console.log('New Order Arrived:');
     });
-
-    
 
   }
 

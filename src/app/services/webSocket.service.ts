@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { filter, map, Observable } from 'rxjs';
+import { filter, map, Observable, Subject } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { IOrder } from '../model/orderModel';
 
@@ -21,11 +21,26 @@ export class WebSocketService {
     this.socket$.complete(); // Close the connection
   }
 
-  on<T>(eventName: string): Observable<T> {
-    return this.socket$.asObservable().pipe(
+  // on<T>(eventName: string): Observable<T> {
+  //   return this.socket$.asObservable().pipe(
+  //     filter((message) => message.event === eventName),
+  //     map((message) => message.data as T)
+  //   );
+  // }
+
+  on<T>(eventName: string): Subject<T> {
+    const subject = new Subject<T>();
+  
+    this.socket$.asObservable().pipe(
       filter((message) => message.event === eventName),
       map((message) => message.data as T)
+    ).subscribe(
+      (value) => subject.next(value),  // Forward the value to the subject
+      (error) => subject.error(error), // Forward errors to the subject
+      () => {} // No completion here, as the subject should never complete
     );
+  
+    return subject;
   }
 
   emit<T>(eventName: string, data: T): void {
