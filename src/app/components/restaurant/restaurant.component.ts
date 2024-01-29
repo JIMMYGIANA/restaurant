@@ -6,8 +6,6 @@ import { Observable, defer, repeat, repeatWhen, switchMap, tap } from 'rxjs';
 import { ITable } from 'src/app/model/tableModel';
 import { WaitersService } from 'src/app/services/waiters.service';
 import { WebSocketService } from 'src/app/services/webSocket.service';
-import { IOrder } from 'src/app/model/orderModel';
-import { IReceipt } from 'src/app/model/receiptModel';
 
 @Component({
   selector: 'app-restaurant',
@@ -30,13 +28,13 @@ export class RestaurantComponent implements OnInit, OnDestroy {
   protected readonly notificationOrderReady = this.webSocketService.on<IOrder>('orderReady').pipe(
     tap((order: any) => alert('Order '+order.data.orderNumber+'\nTable '+order.data.tableNumber+'\n'+ order.data.typeOrder+' ready!' ))
   );
- 
-  protected logout(){
+
+  protected logout() {
     this.userService.logout();
     this.router.navigate(['']);
   }
 
-  protected orders(){
+  protected orders() {
     this.router.navigate(['/orders']);
   }
 
@@ -45,8 +43,8 @@ export class RestaurantComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private waitersService: WaitersService,
     private webSocketService: WebSocketService
-    ){
-      this.tables.forEach(t => console.log(t));
+  ) {
+    this.tables.forEach(t => console.log(t));
   }
 
 
@@ -65,7 +63,7 @@ export class RestaurantComponent implements OnInit, OnDestroy {
         // This block will be executed when the observable completes
       },
     });
-    
+
     this.notificationOrderReady.subscribe(() => {
       console.log('Order Ready');
     });

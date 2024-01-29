@@ -1,1 +1,61 @@
-<router-outlet></router-outlet>
+<div class="col">
+
+    <div class="row gap-3"
+         style="margin-bottom: 8px; align-items: center; padding: 8px;">
+        <div class="col d-flex-exp">
+            <div class="row gap-3"
+                 style="align-items: center;">
+                <label><b>Jimmy's Reastaurant</b></label>
+                <a routerLink="./">
+                    <span>Home</span>
+                </a>
+                <div *ngIf="isLoggedIn$ | async"
+                     class="row gap-3"
+                     style="align-items: center;">
+                    <a *ngIf="isCashier$ | async"
+                       routerLink="cash">
+                        <span>CASH</span>
+                    </a>
+                    <a *ngIf="isCook$ | async"
+                       routerLink="kitchen">
+                        <span>Kitchen</span>
+                    </a>
+                    <a *ngIf="isBartender$ | async"
+                       routerLink="bar">
+                        <span>BAR</span>
+                    </a>
+                    <a *ngIf="isWaiter$ | async"
+                       routerLink="orders">
+                        <span>Orders</span>
+                    </a>
+                    <a *ngIf="isWaiter$ | async"
+                       routerLink="restaurant">
+                        <span>Restaurant</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="isLoggedIn$ | async"
+             class="col">
+            <div class="row gap-3"
+                 style="align-items: center;">
+                <label>{{userRole$ | async}}</label>
+                <button (click)="logout()">Logout</button>
+            </div>
+        </div>
+        <div *ngIf="(isLoggedIn$ | async) !== true"
+             class="col">
+            <div class="row gap-3"
+                 style="align-items: center;">
+                <a routerLink="login">Login</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+
+</div>

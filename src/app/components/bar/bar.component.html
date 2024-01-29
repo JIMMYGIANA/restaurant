@@ -2,9 +2,11 @@
 
 <h2 style="margin-left: 10px;">ORDERS</h2>
 
-<div *ngFor="let group of ordersGrouped$ | async" style="margin-bottom: 20px;">
+<div *ngFor="let group of ordersGrouped$ | async"
+     style="margin-bottom: 20px;">
   <div style="font-weight: bold;">Table {{ group.key }}</div>
-  <div *ngFor="let order of group.items" style="margin-left: 20px;">
+  <div *ngFor="let order of group.items"
+       style="margin-left: 20px;">
 
     <div *ngIf="order.orderPreparedDrink == null">
       

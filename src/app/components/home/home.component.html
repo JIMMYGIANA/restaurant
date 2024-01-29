@@ -1,0 +1,28 @@
+<h1>Ristorante</h1>
+
+<div *ngIf="isLoggedIn$ | async">
+    <a *ngIf="isCashier$ | async"
+       routerLink="cash">
+        <h3>CASH</h3>
+    </a>
+
+    <a *ngIf="isCook$ | async"
+       routerLink="kitchen">
+        <h3>Kitchen</h3>
+    </a>
+
+    <a *ngIf="isBartender$ | async"
+       routerLink="bar">
+        <h3>BAR</h3>
+    </a>
+
+    <a *ngIf="isWaiter$ | async"
+       routerLink="orders">
+        <h3>Orders</h3>
+    </a>
+
+    <a *ngIf="isWaiter$ | async"
+       routerLink="restaurant">
+        <h3>Restaurant</h3>
+    </a>
+</div>

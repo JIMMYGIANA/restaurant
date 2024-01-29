@@ -1,5 +1,7 @@
 <h1>Cash</h1>
-<div fxLayout="row" fxLayoutAlign="start" style="margin-bottom: 30px;">
+<div fxLayout="row"
+     fxLayoutAlign="start"
+     style="margin-bottom: 30px;">
   <div fxFlex="column">
     <h2 style="margin-left: 10px;">TABLES</h2>
     <button (click)="viewTableCreate()">New</button>
@@ -22,7 +24,8 @@
             OCUPIED
           </mat-card-subtitle>
 
-          <button mat-button (click)="createReceipt(table.number)">Receipt</button>
+          <button mat-button
+                  (click)="createReceipt(table.number)">Receipt</button>
 
 
         </div>
@@ -47,44 +50,49 @@
 
     <h2 style="margin-left: 10px;">RECEIPTS</h2>
 
-    
+
 
     <mat-accordion>
-      <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+      <mat-expansion-panel (opened)="panelOpenState = true"
+                           (closed)="panelOpenState = false">
         <mat-expansion-panel-header>
           <mat-panel-title>
             View list
           </mat-panel-title>
           <mat-panel-description>
-            
+
           </mat-panel-description>
         </mat-expansion-panel-header>
 
-        <div *ngFor="let receipt of (receipts$ | async); let i = index" style="width: 300px; margin: 30px; ">
+        <div *ngFor="let receipt of (receipts$ | async); let i = index"
+             style="width: 300px; margin: 30px; ">
 
           <label><b>{{ receipt.number }} </b> _ Table {{ receipt.table }} Total {{ receipt.totalPrice }} Creation {{ receipt.dataCreation }}</label>
-          
+
           <button (click)="viewReceiptDetails(receipt.number)">Details</button>
         </div>
 
       </mat-expansion-panel>
-      </mat-accordion>
+    </mat-accordion>
 
-    
+
 
     <h2 style="margin-left: 10px;">ORDERS</h2>
-  
-    <div *ngFor="let order of (orders | async);  let i = index" style="width: 300px; margin: 30px; ">
-          
+
+    <div *ngFor="let order of (orders$ | async);  let i = index"
+         style="width: 300px; margin: 30px; ">
+
 
       <b>{{ order.number }} Table {{ order.table }} </b>
       <b></b>
 
       <p>Creation: {{ order.orderCreation }}</p>
 
-      <p>Dishes in preparation: {{ order.orderTakenCook }}</p>
-      <p>Dishes ready: {{ order.orderPreparedCook }}</p>
-        
+      <ng-template *ngIf="order.dishes.length">
+        <p>Dishes in preparation: {{ order.orderTakenCook }}</p>
+        <p>Dishes ready: {{ order.orderPreparedCook }}</p>
+      </ng-template>
+
       <ng-template *ngIf="order.drinks.length > 0">
         <p>Drinks in preparation: {{ order.orderTakenDrink }}</p>
         <p>Drinks ready: {{ order.orderPreparedDrink }}</p>
@@ -94,14 +102,9 @@
       <p>Order payed: {{ order.orderPayed }}</p>
       <br>
 
-      
-      
-    </div>
 
-    <button (click)="logout()">LOGOUT</button>
+
+    </div>
 
   </div>
 </div>
-
-
-<!-- <button (click)="logout()">Logout</button> -->
