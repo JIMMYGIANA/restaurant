@@ -24,7 +24,6 @@ export class BarComponent extends ReactiveComponent implements OnInit, OnDestroy
     shareReplay(1)
   );
 
-
   protected readonly tableNumber$: Observable<number> = this._barsService.tableNumber().pipe(distinctUntilChanged(), shareReplay(1));
 
   protected readonly ordersGrouped$: Observable<{ key: string, items: IOrder[] }[]> = combineLatest([this.orders$, this.tableNumber$])

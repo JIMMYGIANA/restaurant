@@ -41,10 +41,10 @@ export class UserStatsComponent {
         this.waiterStats$ = this.cashierService.readServeStats(data.userEmail);
         break;
       case(UserRole.Bartenders): 
-        this.userStats$ = this.cashierService.readPreparationCookStats(data.userEmail);
+        this.userStats$ = this.cashierService.readPreparationDrinkStats(data.userEmail);
         break;
       case(UserRole.Cook): 
-        this.userStats$ = this.cashierService.readPreparationDrinkStats(data.userEmail);
+        this.userStats$ = this.cashierService.readPreparationCookStats(data.userEmail);
         break;
       default:
         throw new Error();

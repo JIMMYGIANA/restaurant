@@ -57,7 +57,7 @@ export class CashComponent implements OnInit {
   );
 
   protected readonly orders$: Observable<IOrder[]> = defer(() => this.cashierService.readOrders()).pipe(
-    repeatWhen(() => merge(this.newOrderNotification, this.orderReadyNotification))
+    repeatWhen(() => merge(this.newOrderNotification, this.orderReadyNotification, this.receiptNotification$$))
   );
 
   protected readonly ordersStatistics: Observable<IOrderStatistics[]> = defer(() => this.cashierService.readOrdersStatistics()).pipe(

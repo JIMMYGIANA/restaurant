@@ -6,11 +6,11 @@
         <div fxFlex="column">
             <div *ngFor="let order of (ordersTable$$ | async); let i = index" style="width: 300px; margin: 30px; ">
                 <b>Order number{{ order.number }}</b>
-                <p>Creation: {{ order.orderCreation }}</p>
+                <p>Creation: {{ order.orderCreation | date:"MMM dd, yyyy 'at' hh:mm a" }}</p>
 
                 <div *ngIf="order.orderTakenDrink">
                     <b>Bar</b>
-                    <p>Preparation: {{ order.orderTakenDrink }}</p>
+                    <p>Preparation: {{ order.orderTakenDrink  | date:"MMM dd, yyyy 'at' hh:mm a" }}</p>
                     <p style="color: orange;">Production time: {{ order.dishesProductionTime }}</p>
                     <p>Completed: {{ order.orderPreparedDrink }}</p>
                 </div>
@@ -18,7 +18,7 @@
                 <div *ngIf="order.orderTakenCook">
                     <b>Kitchen</b>
                     <p>Preparation: {{ order.orderTakenCook }}</p>
-                    <p style="color: orange;">Production time: {{ order.dishesProductionTime }}</p>
+                    <p style="color: orange;">Production time: {{ order.dishesProductionTime  | date:"MMM dd, yyyy 'at' hh:mm a" }}</p>
                     <p>Completed: {{ order.orderPreparedCook }}</p>
                 </div>
                 
