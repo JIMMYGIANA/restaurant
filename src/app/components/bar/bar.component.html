@@ -21,7 +21,7 @@
           <div *ngFor="let drink of order.drinks">
             <app-drink [drinkNumber]="drink"></app-drink>
           </div>
-          <button (click)="completeOrder(order.number, order.table)">Serve</button>
+          <button (click)="completeOrder(order.number, order.table)">Completed</button>
         </ng-template>
 
         

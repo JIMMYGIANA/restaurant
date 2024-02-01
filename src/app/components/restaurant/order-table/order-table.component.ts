@@ -31,7 +31,7 @@ export class OrderTableComponent {
     this.ordersTable$$ = new BehaviorSubject<IOrder[]>([]);
 
     this.waitersService.readOrdersTable(data.tableNumber).pipe(
-      map(orders => orders.filter((o) => o.orderServed == null)),
+      map(orders => orders.filter((o) => o.orderServed == null && o.orderPayed == null)),
       tap(orders => this.ordersTable$$.next(orders))
     ).subscribe();
 

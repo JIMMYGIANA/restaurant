@@ -6,6 +6,8 @@ import { Observable, defer, repeat, repeatWhen, switchMap, tap } from 'rxjs';
 import { ITable } from 'src/app/model/tableModel';
 import { WaitersService } from 'src/app/services/waiters.service';
 import { WebSocketService } from 'src/app/services/webSocket.service';
+import { IOrder } from 'src/app/model/orderModel';
+import { IReceipt } from 'src/app/model/receiptModel';
 
 @Component({
   selector: 'app-restaurant',

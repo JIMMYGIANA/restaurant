@@ -88,83 +88,44 @@ export class CashierService {
 
   // manage restaurant
   createUser(userData: IUser){
-    return this.http.post(`${this.baseUrl}/users/createUser`, userData);
+    return this._http.post(`${this._baseUrl}/users/createUser`, userData);
   }
 
   createTable(tableData: ITable){
-    return this.http.post(`${this.baseUrl}/tables/createTable`, tableData);
+    return this._http.post(`${this._baseUrl}/tables/createTable`, tableData);
   }
 
   createDish(dishData: IDish){
-    return this.http.post(`${this.baseUrl}/menu/createDish`, dishData);
+    return this._http.post(`${this._baseUrl}/menu/createDish`, dishData);
   }
 
   createDrink(drinkData: IDrink){
-    return this._http.post(`${this.baseUrl}/menu/createDrink`, drinkData);
+    return this._http.post(`${this._baseUrl}/menu/createDrink`, drinkData);
   }
 
   deleteUser(userEmail: string){
     const params = new HttpParams()
             .set('userEmail', userEmail.toString());
-    return this.http.delete(`${this.baseUrl}/users/deleteUser`, {params});
+    return this._http.delete(`${this._baseUrl}/users/deleteUser`, {params});
   }
 
   deleteTable(tableNumber: number){
     const params = new HttpParams()
             .set('tableNumber', tableNumber.toString());
-    return this.http.delete(`${this.baseUrl}/tables/deleteTable`, {params});
+    return this._http.delete(`${this._baseUrl}/tables/deleteTable`, {params});
   }
 
   deleteDish(dishNumber: number){
     const params = new HttpParams()
             .set('rdishNumber', dishNumber.toString());
-    return this.http.delete(`${this.baseUrl}/cashier/deleteDish`, {params});
+    return this._http.delete(`${this._baseUrl}/cashier/deleteDish`, {params});
   }
 
   deleteDrink(drinkNumber: number){
     const params = new HttpParams()
             .set('drinkNumber', drinkNumber.toString());
-    return this.http.delete(`${this.baseUrl}/cashier/deleteDrink`, {params});
+    return this._http.delete(`${this._baseUrl}/cashier/deleteDrink`, {params});
   }
 
-  // manage restaurant
-  createUser(userData: IUser){
-    return this.http.post(`${this.baseUrl}/users/createUser`, userData);
-  }
-
-  createTable(tableData: ITable){
-    return this.http.post(`${this.baseUrl}/tables/createTable`, tableData);
-  }
-
-  createDish(dishData: IDish){
-    return this.http.post(`${this.baseUrl}/menu/createDish`, dishData);
-  }
-
-  createDrink(drinkData: IDrink){
-    return this.http.post(`${this.baseUrl}/menu/createDrink`, drinkData);
-  }
-
-  deleteUser(userEmail: string){
-    const params = new HttpParams()
-            .set('userEmail', userEmail.toString());
-    return this.http.delete(`${this.baseUrl}/users/deleteUser`, {params});
-  }
-
-  deleteTable(tableNumber: number){
-    const params = new HttpParams()
-            .set('tableNumber', tableNumber.toString());
-    return this.http.delete(`${this.baseUrl}/tables/deleteTable`, {params});
-  }
-
-  deleteDish(dishNumber: number){
-    const params = new HttpParams()
-            .set('rdishNumber', dishNumber.toString());
-    return this.http.delete(`${this.baseUrl}/cashier/deleteDish`, {params});
-  }
-
-  deleteDrink(drinkNumber: number){
-    const params = new HttpParams()
-            .set('drinkNumber', drinkNumber.toString());
-    return this.http.delete(`${this.baseUrl}/cashier/deleteDrink`, {params});
-  }
+  
 }

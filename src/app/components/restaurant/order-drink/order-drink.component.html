@@ -1,1 +1,22 @@
-<p>order-drink works!</p>
+<mat-card style="width:max-content;">
+    <mat-card-header>
+      <div>
+  
+      </div>
+      
+      <mat-card-title>{{ drinkData.name }}<b> {{ drinkData.price }} €</b></mat-card-title>
+      
+    </mat-card-header>
+    <p style="max-width: 300px; margin-left: 10px;">{{ drinkData.description }}</p>
+      
+    <mat-card-content>
+      
+      <button (click)="updateNumber(false)" mat-button>-</button>
+      <input [(ngModel)]="drinkNumber">
+      <button (click)="updateNumber(true)" mat-button>+</button>
+      
+    </mat-card-content>
+    <button mat-button (click)="setNumber()">ADD TO ORDER</button>
+  </mat-card>
+  
+   

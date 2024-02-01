@@ -38,6 +38,7 @@ import { OrderTableComponent } from './components/restaurant/order-table/order-t
 import { OrderDishComponent } from './components/restaurant/orderDish/order.component';
 import { AuthInterceptor } from './services/auth-interceptor';
 import { WebSocketService } from './services/webSocket.service';
+import { OrderDrinkComponent } from './components/restaurant/order-drink/order-drink.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import { WebSocketService } from './services/webSocket.service';
     RestaurantComponent,
     OrdersComponent,
     OrderMenuComponent,
+    OrderDrinkComponent,
     OrderDishComponent,
     DishComponent,
     KitchenComponent,

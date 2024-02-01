@@ -1,8 +1,7 @@
-import { BehaviorSubject, Observable, combineLatest, map, take, repeatWhen, tap, repeat, filter } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, map, take, repeatWhen, tap, repeat, filter, defer, merge } from 'rxjs';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, repeatWhen, take, tap } from 'rxjs';
 import { IOrder } from 'src/app/model/orderModel';
 import { IReceipt } from 'src/app/model/receiptModel';
 import { IOrderStatistics } from 'src/app/model/statisticsModels/orderStatisticsModel';
@@ -53,7 +52,7 @@ export class CashComponent implements OnInit {
     tap(() => console.log("ORDER_SERVED"))
   );
 
-  protected readonly tables$$: Observable<ITable[]> = defer(() => this.cashierService.readTables()).pipe(
+  protected readonly tables$: Observable<ITable[]> = defer(() => this.cashierService.readTables()).pipe(
     repeatWhen(() => merge(this.newOrderNotification, this.setClientNotification, this.orderReadyNotification, this.tableNotification$$, this.receiptNotification$$))
   );
 
@@ -86,7 +85,7 @@ export class CashComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
   ) {
-    this.orders.forEach(t => t.map(order => console.log(order.dishes.length)));
+    this.orders$.forEach(t => t.map(order => console.log(order.dishes.length)));
 
   }
 

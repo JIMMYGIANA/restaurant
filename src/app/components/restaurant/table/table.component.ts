@@ -83,7 +83,7 @@ export class TableComponent implements OnInit, OnDestroy {
       width: '90%',  
       height: '90vh',
       data: { 
-        tableNumber: this.tableData.number
+        tableNumber: this.tableNumber
       }
     })
   }

@@ -9,6 +9,13 @@
             </div>
         </div>
     </div>
+    <div fxLayout="row" fxLayoutAlign="start" style="margin-bottom: 30px;">
+        <div fxFlex="column">
+            <div *ngFor="let drink of (drinks | async); let i = index" style="width: 300px; margin: 30px; ">
+                <app-order-drink [drinkData]="drink" (drinkNumberChange)="onDrinkNumberChange($event)"></app-order-drink>
+            </div>
+        </div>
+    </div>
     <div style="margin-left: 50px;">
         <button mat-button (click)="createOrder()">Create order</button>
         <button mat-button (click)="closeDialog()">Close</button>

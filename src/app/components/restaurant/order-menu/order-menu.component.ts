@@ -51,21 +51,34 @@ export class OrderMenuComponent {
     }
   }
 
+  onDrinkNumberChange(data: { drinkCount: number, drinkNumber: number }) {
+    // Gestisci il valore ricevuto dal componente figlio
+    console.log('Nuovo valore di drinkNumber nel componente padre:', data.drinkCount);
+    
+    for (let i = 0; i < data.drinkCount; i++) {
+      this.order.drinks.push(data.drinkNumber);
+    }
+  }
+
   createOrder(){
     if(this.order.table > 0){
       this.waitersService.createOrder(this.order).pipe(
         take(1),
       ).subscribe((response: any) => {
         this.webSocketService.notifyOrderCreated(response.data, this.data.tableNumber);
+
+        const orderStat = { 
+          orderNumber: response.data,
+          tableNumber: this.data.tableNumber,
+          dishes: this.order.dishes.length,
+          drinks: this.order.drinks.length,
+          clients: this.data.tableClients
+        };
+
+        this.waitersService.createOrderStatistics(orderStat).pipe(take(1)).subscribe();
+
       });
-      const orderStat = {
-        orderNumber: this.order.number,
-        tableNumber: this.data.tableNumber,
-        dishes: this.order.dishes.lenght,
-        drinks: this.order.drinks.lenght,
-        clients: this.data.tableClients
-      };
-      this.waitersService.createOrderStatistics(orderStat).pipe(take(1)).subscribe();
+      
 
       this.closeDialog();
     } else alert('Error creating order')
