@@ -18,12 +18,9 @@
 
       <ng-template #serveOrder>
         <p>Production time: {{ order.dishesProductionTime }}</p>
-        <div *ngFor="let dish of order.dishes">
-          <app-dish [dishNumber]="dish"></app-dish>
-        </div>
+        <app-dishes [dishIds]="order.dishes"></app-dishes>
         <button (click)="completeOrder(order.number, order.table)">Completed</button>
       </ng-template>
-
 
     </div>
   </div>

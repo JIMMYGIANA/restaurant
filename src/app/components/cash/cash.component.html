@@ -86,20 +86,20 @@
       <b>{{ order.number }} Table {{ order.table }} </b>
       <b></b>
 
-      <p>Creation: {{ order.orderCreation }}</p>
+      <p>Creation: {{ order.orderCreation  | date:"MMM dd, yyyy 'at' hh:mm a"}}</p>
 
       <ng-template *ngIf="order.dishes.length">
-        <p>Dishes in preparation: {{ order.orderTakenCook }}</p>
-        <p>Dishes ready: {{ order.orderPreparedCook }}</p>
+        <p>Dishes in preparation: {{ order.orderTakenCook  | date:"MMM dd, yyyy 'at' hh:mm a"}}</p>
+        <p>Dishes ready: {{ order.orderPreparedCook  | date:"MMM dd, yyyy 'at' hh:mm a"}}</p>
       </ng-template>
 
       <ng-template *ngIf="order.drinks.length > 0">
-        <p>Drinks in preparation: {{ order.orderTakenDrink }}</p>
-        <p>Drinks ready: {{ order.orderPreparedDrink }}</p>
+        <p>Drinks in preparation: {{ order.orderTakenDrink  | date:"MMM dd, yyyy 'at' hh:mm a"}}</p>
+        <p>Drinks ready: {{ order.orderPreparedDrink  | date:"MMM dd, yyyy 'at' hh:mm a"}}</p>
       </ng-template>
 
-      <p>Order served: {{ order.orderServed }}</p>
-      <p>Order payed: {{ order.orderPayed }}</p>
+      <p>Order served: {{ order.orderServed  | date:"MMM dd, yyyy 'at' hh:mm a"}}</p>
+      <p>Order payed: {{ order.orderPayed  | date:"MMM dd, yyyy 'at' hh:mm a"}}</p>
       <br>
 
 

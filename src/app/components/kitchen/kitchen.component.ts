@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, combineLatest, defer, map, switchMap, take } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, defer, map, switchMap, take, multicast, refCount } from 'rxjs';
 import { distinctUntilChanged, shareReplay, takeUntil, tap } from 'rxjs/operators';
 import { IOrder } from 'src/app/model/orderModel';
 import { CooksService } from 'src/app/services/cooks.service';
@@ -8,6 +8,7 @@ import { RestaurantService } from 'src/app/services/restaurant.service';
 import { UserService } from 'src/app/services/user.service';
 import { WebSocketService } from 'src/app/services/webSocket.service';
 import { ReactiveComponent } from '../reactive.component';
+import { IDish } from 'src/app/model/dishModel';
 
 @Component({
   selector: 'app-kitchen',
@@ -37,9 +38,29 @@ export class KitchenComponent extends ReactiveComponent implements OnInit, OnDes
           return acc;
         }, {});
 
-        return Object.entries(groupedOrders).map(([key, items]) => ({ key, items }));
+        const groups = Object.entries(groupedOrders).map(([key, items]) => ({ key, items }));
+        // const result: { key: string, items: IOrder[] }[] = [];
+        // for (const group of groups) {
+        //   let success = true;
+        //   for (const item of group.items) {
+        //     const n = (item.dishes?.length ?? 0);
+        //     if(n <= 0) success = false;
+        //   }
+        //   if(success) 
+        //     result.push(group);
+        // }
+        
+        const result = groups.map(g => {
+          return ({
+            key: g.key,
+            items: g.items?.filter(o => (o.dishes?.length ?? 0) > 0) ?? []
+          })
+        }).filter(g => g.items.length > 0);
+
+        return result;
       })
     );
+  
 
   protected takeOrder(orderNumber: number, orderTable: number) {
     this._cooksService.takeOrder({
@@ -49,8 +70,10 @@ export class KitchenComponent extends ReactiveComponent implements OnInit, OnDes
 
       this._cooksService.readOrders().pipe(
         map(orders => orders.filter(order => order.orderPreparedCook == null)),
-        shareReplay(1),
-        tap(orders => this.orders$$.next(orders))
+        //tap(orders => this.orders$$.next(orders)),
+        multicast(() => this.orders$$),
+        refCount(),
+        shareReplay(1)
       ).subscribe();
     });
   }
