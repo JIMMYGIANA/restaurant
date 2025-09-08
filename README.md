@@ -1,27 +1,54 @@
-# Restaurant
+# 🍽️ Restaurant Orders
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.2.
+### Web application sviluppata in **Angular** per la gestione degli ordini di un ristorante in tempo reale.  
+La comunicazione client-server avviene tramite **WebSocket** con gestione reattiva grazie a **RxJS**.
 
-## Development server
+---
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## 🚀 Development server
 
-## Code scaffolding
+Esegui `ng serve` per avviare il dev server.  
+Naviga su `http://localhost:4200/`.  
+L'applicazione si ricarica automaticamente ad ogni modifica dei file sorgenti.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+---
 
-## Build
+## 🛠️ Code scaffolding
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Esegui `ng generate component component-name` per generare un nuovo componente.  
+Puoi anche utilizzare:  
+- `ng generate directive|pipe|service|class|guard|interface|enum`
 
-## Running unit tests
+---
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## ⚙️ Build
 
-## Running end-to-end tests
+Esegui `ng build` per buildare il progetto.  
+Gli artifact saranno generati nella cartella `dist/`.
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+---
 
-## Further help
+## ✅ Funzionalità principali
+- **Gestione ordini in tempo reale** tramite WebSocket  
+- **Aggiornamenti reattivi** con RxJS (sottoscrizioni agli stream di dati)  
+- **Interfaccia responsive** sviluppata con Angular Material  
+- Possibilità di monitorare, aggiungere e aggiornare ordini in live  
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+---
+
+## 🧪 Running unit tests
+
+Esegui `ng test` per i test unitari con [Karma](https://karma-runner.github.io).
+
+---
+
+## 🌐 Running end-to-end tests
+
+Esegui `ng e2e` per i test end-to-end (necessita di un pacchetto di testing e2e).
+
+---
+
+## 📖 Further help
+
+Per ulteriori informazioni su Angular CLI:  
+[Angular CLI Overview and Command Reference](https://angular.io/cli)
